@@ -1,6 +1,8 @@
 #pragma version(1)
 #pragma rs java_package_name(com.example.jonathan.imageed)
 
+
+
 float matrice[];
 rs_allocation matrice2;
 int taille;
@@ -24,14 +26,14 @@ void root(const uchar4* v_in, uchar4* v_out, uint32_t x, uint32_t y)
                 coul += rsGetElementAt_float(matrice2,i)*rsUnpackColor8888(rsGetElementAt_uchar4(img,x+(i%dim)-centre,y+(i/dim) - centre));
 
         }
-        //Attention on ne divise pas dans la convolution: faire une fonction extérieur
-        coul = coul/total;
     }
     else
     {
         coul = rsUnpackColor8888(*v_in);
     }
-    coul.a = 0.0f;
+
+
+    coul.a = 255;
     //coul = rsUnpackColor8888(*v_in);
     *v_out = rsPackColorTo8888(coul);
 

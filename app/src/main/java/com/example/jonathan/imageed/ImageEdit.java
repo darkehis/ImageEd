@@ -35,9 +35,9 @@ public class ImageEdit {
 
 
     /**
+     *Fonction Java de grisage de l'image: maintenant inutilisé.
      *
-     *
-     * @param bmp
+     * @param bmp le Bitmap à modifier.
      * @return
      */
 
@@ -73,21 +73,26 @@ public class ImageEdit {
 
     public static Bitmap griserScr(Bitmap bmp, Context context)
     {
+
+        //Le nouveau bitmap: le result
         Bitmap bmp2 = bmp.copy(bmp.getConfig(),true);
-        //RenderScript RS = RenderScript.create(context);
 
+
+        //création de l'acces  au contexte renderscript.
         RenderScript RS = RenderScript.create(context);
-        Allocation allocIn;
-        allocIn = Allocation.createFromBitmap(RS, bmp,
-                Allocation.MipmapControl.MIPMAP_NONE,
-                Allocation.USAGE_SCRIPT);
 
+        //l'allocation du bitmap à modifier
+        Allocation allocIn;
+        allocIn = Allocation.createFromBitmap(RS, bmp, Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
+
+
+        //l'allocation du bitmap resultat.
         Allocation allocOut = Allocation.createTyped(RS, allocIn.getType());
 
+        //L'objet du script de grisage.
         ScriptC_grey script = new ScriptC_grey(RS);
 
-
-
+        //l'application du script à chaque pixel.
         script.forEach_root(allocIn,allocOut);
 
 
@@ -96,9 +101,7 @@ public class ImageEdit {
         return bmp2;
 
     }
-    //commentaire
 
-    //TODO revoir de centrage de l'image après un premier zoom: question d'echelle
 
 
     /**
@@ -114,10 +117,10 @@ public class ImageEdit {
     public static Bitmap zoomScr(Bitmap bmp,int w,int h, Context context)
     {
 
-        //changer ca osef on passe le bitmap d'origin par origin
+        //Déclaration du bitmap résultat
         Bitmap bmp2 = Bitmap.createBitmap(w,h,bmp.getConfig());
 
-        Log.i("zoomSrc","on a:" + bmp.getWidth() + ":" + bmp2.getWidth());
+        //Log.i("zoomSrc","on a:" + bmp.getWidth() + ":" + bmp2.getWidth());
 
         float zoom = (float) (w)/(float)(bmp.getWidth());
 
@@ -142,6 +145,7 @@ public class ImageEdit {
         script.set_zoom(zoom);
 
 
+        //Application u script à chaque pixel.
         script.forEach_root(allocIn,allocOut);
 
 
@@ -155,9 +159,8 @@ public class ImageEdit {
     }
 
 
-    //en fait: changer contraste avec min = 0 et max = 255;
 
-    //devenu useleess
+    //devenu useless
 
 
     public static Bitmap extensionContraste(Bitmap bmp)
@@ -287,7 +290,6 @@ public class ImageEdit {
         float[] lut = new float[256];
         int debLum = min;
         int finLum = max;
-        float moyGris = 0;
         float[] listLum = new float[bmp.getWidth()*bmp.getHeight()];
         int[] pix = new int[bmp.getWidth()*bmp.getHeight()];
         Bitmap bmp2 = bmp.copy(bmp.getConfig(),true);
@@ -304,19 +306,17 @@ public class ImageEdit {
         maxV = minV = listLum[0];
         for(int i = 0;i<listLum.length;i++)
         {
-            moyGris += listLum[i];
+
             if(listLum[i]>maxV)
                 maxV = listLum[i];
             if(listLum[i]<minV)
                 minV = listLum[i];
         }
-        //TODO: ici varianle unused: a voir pour supprimer
-        moyGris = moyGris/listLum.length;
+
         for(int i =0;i<256;i++)
         {
             lut[i] = i;
             lut[i] = (int)((finLum-debLum)*((lut[i]-minV)/(maxV-minV)) + debLum);
-            //lut[i]  = Math.round(h);
         }
         for(int i = 0;i<pix.length;i++)
         {
@@ -387,7 +387,7 @@ public class ImageEdit {
     }
 
 
-    /**
+    /**Fonction d'application d'une matrice de convolution
      *
      * @param bmp
      * @param matrix
@@ -401,15 +401,16 @@ public class ImageEdit {
         Bitmap bmp2 = bmp.copy(bmp.getConfig(),true);
 
 
+        //Classe d'acces à la couche renderscript.
         RenderScript RS = RenderScript.create(context);
+
+        //Allocation correspondante au bitmap de départ.
         Allocation allocIn;
         allocIn = Allocation.createFromBitmap(RS, bmp2, Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
 
+
+        //Allocation correspondante au bitmap resultat
         Allocation allocOut = Allocation.createTyped(RS, allocIn.getType());
-
-        //allocIn = Allocation.createFromBitmap(RS, bmp2, Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
-
-        //Allocation allocOut = Allocation.createTyped(RS, allocIn.getType());
 
         ScriptC_convolution script = new ScriptC_convolution(RS);
 
@@ -417,11 +418,18 @@ public class ImageEdit {
 
         //variables dont on a besoin pour faire tourner le script.
         Allocation img = Allocation.createFromBitmap(RS,bmp, Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
+
+        //taille de la matrice
         int dim = matrix.length;
+        //nb de coeff de la matrice.
         int taille = dim*dim;
+        //coordonnées du coeficient centrale de la matrice.
         int centre = dim/2;
         float total = calculTotal(matrix);
 
+
+
+        //Transformation de la matrice en tableau de 1 dimension.
         float matrix1D[] = new float[dim*dim];
         for(int i =0;i<dim;i++)
         {
@@ -430,6 +438,8 @@ public class ImageEdit {
                 matrix1D[(i*dim)+j] = matrix[i][j];
             }
         }
+
+        //Allocation correspondante à la matrice noyau.
         Allocation matAll = Allocation.createSized(RS,Element.F32(RS),taille);
         matAll.copy1DRangeFrom(0,taille,matrix1D);
 
@@ -456,9 +466,8 @@ public class ImageEdit {
 
 
 
-    //TODO: supprimer fonction zoom jav.
 
-    //Maintenant c'est useless
+    //Fonction de zoom en java: devenue useless
 
     public static Bitmap zoom(Bitmap bSrc, int w, int h)
     {
@@ -562,7 +571,7 @@ public class ImageEdit {
     }
 
 
-    /**
+    /**Fonction de calcul de la somme des coeff de la matrice noyau.
      *
      * @param matrix
      * @return la somme des coeff de la matrice.

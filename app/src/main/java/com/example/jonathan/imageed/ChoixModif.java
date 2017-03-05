@@ -8,11 +8,19 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
 
+
+/**Activité permettant de choisir le:s modifications à apporter aux images
+ *
+ *
+ */
+
 public class ChoixModif extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Assignation de la layout à l'activité.
         setContentView(R.layout.activity_choix_modif);
 
 
@@ -22,23 +30,22 @@ public class ChoixModif extends Activity {
         bout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent result =  new Intent();
-                result.putExtra("modif",MainActivity.GRISER);
-                setResult(RESULT_OK,result);
+                Intent resultat =  new Intent();
+                resultat.putExtra("modif",MainActivity.GRISER);
+                setResult(RESULT_OK,resultat);
                 finish();
             }
         });
 
-        //commentaire
 
         bout = (Button) findViewById(R.id.bout_ega);
 
         bout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent result =  new Intent();
-                result.putExtra("modif",MainActivity.EGALISER);
-                setResult(RESULT_OK,result);
+                Intent resultat =  new Intent();
+                resultat.putExtra("modif",MainActivity.EGALISER);
+                setResult(RESULT_OK,resultat);
                 finish();
             }
         });
@@ -48,9 +55,9 @@ public class ChoixModif extends Activity {
         bout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent result =  new Intent();
-                result.putExtra("modif",MainActivity.DIM_CONTRASTE);
-                setResult(RESULT_OK,result);
+                Intent resultat =  new Intent();
+                resultat.putExtra("modif",MainActivity.DIM_CONTRASTE);
+                setResult(RESULT_OK,resultat);
                 finish();
             }
         });
@@ -60,9 +67,9 @@ public class ChoixModif extends Activity {
         bout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent result =  new Intent();
-                result.putExtra("modif",MainActivity.EXT_DYN_CONTRASTE);
-                setResult(RESULT_OK,result);
+                Intent resultat =  new Intent();
+                resultat.putExtra("modif",MainActivity.EXT_DYN_CONTRASTE);
+                setResult(RESULT_OK,resultat);
                 finish();
             }
         });
@@ -73,11 +80,26 @@ public class ChoixModif extends Activity {
             public void onClick(View v) {
                 SeekBar barre = (SeekBar) findViewById(R.id.bar_teinte);
                 float t = (barre.getProgress()*360)/100;
-                Intent result  = new Intent();
-                result.putExtra("modif",MainActivity.CHG_TEINTE);
-                result.putExtra("teinte",t);
+                Intent resultat  = new Intent();
+                resultat.putExtra("modif",MainActivity.CHG_TEINTE);
+                resultat.putExtra("teinte",t);
             }
         });
+
+        //bouton test: pour l'instant la convolution.
+
+        bout = (Button) findViewById(R.id.bout_test);
+        bout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SeekBar barre = (SeekBar) findViewById(R.id.bar_teinte);
+                float t = (barre.getProgress()*360)/100;
+                Intent resultat  = new Intent();
+                resultat.putExtra("modif",MainActivity.TEST);
+            }
+        });
+
+
     }
 
 

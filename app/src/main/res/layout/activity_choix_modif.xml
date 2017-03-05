@@ -37,10 +37,16 @@
             android:id="@+id/bout_dim_cont" />
 
         <Button
-            android:text="Test"
+            android:text="Extension Contraste"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/bout_ext_cont" />
+
+        <Button
+            android:text="Test"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/bout_test" />
 
         <SeekBar
             android:layout_width="match_parent"
