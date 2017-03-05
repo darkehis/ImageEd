@@ -18,16 +18,15 @@ void root(const uchar4* in,uchar4* out,uint32_t x,uint32_t y) {
   yAbs = (float)(y)/zoom;
   xO = (int)(xAbs);
   yO = (int)(yAbs);
-  dX = xAbs - xO;
-  dY = yAbs - yO;
 
   float4 ouF = {0.0f,0.0f,0.0f,0.0f};
   if((xO+1)<w_origin && (yO+1)<h_origin)
       {
+        //Operation d'interpolation
 
-         ouF = ((1-dX)*(1-dY))*(rsUnpackColor8888(rsGetElementAt_uchar4(origin,xO,yO))) + ((1-dX)*dY)*(rsUnpackColor8888(rsGetElementAt_uchar4(origin,xO+1,yO))) + ((1-dY)*dX)*(rsUnpackColor8888(rsGetElementAt_uchar4(origin,xO,yO+1))) + dX*dY*(rsUnpackColor8888(rsGetElementAt_uchar4(origin,xO+1,yO+1)));
+         ouF = ((1-(xAbs - xO))*(1-(yAbs - yO)))*(rsUnpackColor8888(rsGetElementAt_uchar4(origin,xO,yO))) + ((1-(xAbs - xO))*(yAbs - yO))*(rsUnpackColor8888(rsGetElementAt_uchar4(origin,xO+1,yO))) + ((1-(yAbs - yO))*(xAbs - xO))*(rsUnpackColor8888(rsGetElementAt_uchar4(origin,xO,yO+1))) + (xAbs - xO)*(yAbs - yO)*(rsUnpackColor8888(rsGetElementAt_uchar4(origin,xO+1,yO+1)));
       }
-    //ouF = {0.0f,0.0f,0.0f,0.0f};
+
     *out = rsPackColorTo8888(ouF);
 
 }
