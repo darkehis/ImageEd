@@ -40,7 +40,14 @@ public class MonImage extends ImageView {
         //initialisation variables
         setScaleType(ScaleType.CENTER);
         _bmpBase = bmp; //le bitmap de base:
-        _bmp = _bmpBase.copy(_bmpBase.getConfig(),true);
+
+        //creation du tableau de bitmap à retenir pour pouvoir annuler les modifications
+
+        _bmp = new Bitmap[_nbBmp];
+        _numCurBmp = 0;
+
+
+        _bmp[_numCurBmp] = _bmpBase.copy(_bmpBase.getConfig(),true);
 
 
 
@@ -224,7 +231,7 @@ public class MonImage extends ImageView {
 
 
 
-        _curBmp = Bitmap.createBitmap(_bmp,_rect.left,_rect.top,_rect.width(),_rect.height());
+        _curBmp = Bitmap.createBitmap(_bmp[_numCurBmp],_rect.left,_rect.top,_rect.width(),_rect.height());
 
         if(_rect.width() != _w )
         {
@@ -246,7 +253,14 @@ public class MonImage extends ImageView {
 
     public void origine()
     {
-        _bmp = _bmpBase.copy(_bmpBase.getConfig(),true);
+        if(_numCurBmp == (_nbBmp-1))
+        {
+            for(int i =0;i<_numCurBmp;i++)
+            {
+                _bmp[i] = _bmp[i+1];
+            }
+        }
+        _bmp[_numCurBmp] = _bmpBase.copy(_bmpBase.getConfig(),true);
         raz();
     }
 
@@ -274,7 +288,7 @@ public class MonImage extends ImageView {
 
 
         //création de l'image zoomée
-        Bitmap bmp2 = createBitmap(nW,nH,_bmp.getConfig());
+        Bitmap bmp2 = createBitmap(nW,nH,_bmp[_numCurBmp].getConfig());
 
         //Taille du "bout" du bitmap de base sur lequel on va travailler : coma oon traitre pas toute l'image.
         int w = (int)Math.floor(nW/fZoom);
@@ -299,9 +313,8 @@ public class MonImage extends ImageView {
         posY = checkBound(posY,0,_curBmp.getHeight() - h);
 
         Log.i("bli","on a " + Integer.toString(posX) + "," + Integer.toString(posY));
-        Bitmap bmp3 = createBitmap(_bmp,posX,posY,w,h);
+        Bitmap bmp3 = createBitmap(_bmp[_numCurBmp],posX,posY,w,h);
 
-        Log.i("bli","c'est nickel2");
 
         //on recupere les pixels de l'image à zoomer
         bmp3.getPixels(pix1,0,w,0,0,w,h);
@@ -311,7 +324,6 @@ public class MonImage extends ImageView {
         int x,y,x1,x2,x3,x4,y1,y2,y3,y4;
 
 
-        Log.i("bli","c'est nickel3");
         //la distance du pixel en cours au pixel de base en haut à gauche de celui ci
         double dx,dy;
 
@@ -405,6 +417,45 @@ public class MonImage extends ImageView {
 
     }
 
+
+    //fonction d'annulation et de restauration
+    public boolean annuler()
+    {
+        if(_numCurBmp>0)
+        {
+            _numCurBmp--;
+        }
+        majRect();
+        if(_numCurBmp>0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
+    }
+
+
+    public boolean restaurer()
+    {
+        if(_numCurBmp<_nbBmp-1)
+        {
+            _numCurBmp++;
+        }
+        majRect();
+        if(_numCurBmp<_nbBmp-1)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
+    }
+
     protected int checkBound(int n,int min,int max)
     {
         int diff = 0;
@@ -450,11 +501,23 @@ public class MonImage extends ImageView {
     //getters et setters
 
     public Bitmap get_bmp() {
-        return _bmp;
+        return _bmp[_numCurBmp];
     }
 
     public void set_bmp(Bitmap _bmp) {
-        this._bmp = _bmp;
+        if(_numCurBmp == _nbBmp-1)
+        {
+            for(int i = 0;i<_numCurBmp;i++)
+            {
+                this._bmp[i] = this._bmp[i+1];
+            }
+        }
+        else
+        {
+            _numCurBmp++;
+
+        }
+        this._bmp[_numCurBmp] = _bmp;
         raz();
     }
 
@@ -477,9 +540,18 @@ public class MonImage extends ImageView {
     //le bitmap de base
     protected Bitmap _bmpBase;
     //le bitmap modifié
-    protected Bitmap _bmp;
+    protected Bitmap[] _bmp;
     //le bitmap qu'on affiche
     protected Bitmap _curBmp;
+
+    //le numero du bitmap que l'on affiche
+    protected int _numCurBmp;
+
+    //le nombre de bitmap maximum retenus
+    protected final int _nbBmp = 10;
+
+
+
 
     //la taille de l'image
     protected int _w;

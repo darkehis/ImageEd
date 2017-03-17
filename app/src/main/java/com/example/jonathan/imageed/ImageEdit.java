@@ -386,6 +386,25 @@ public class ImageEdit {
 
     }
 
+    public static Bitmap EgaliserSrc(Bitmap bmp,Context context)
+    {
+        Bitmap bmp2 = bmp.copy(bmp.getConfig(),true);
+
+
+        //Classe d'acces à la couche renderscript.
+        RenderScript RS = RenderScript.create(context);
+
+        //Allocation correspondante au bitmap de départ.
+        Allocation allocIn;
+        allocIn = Allocation.createFromBitmap(RS, bmp2, Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
+
+
+        //Allocation correspondante au bitmap resultat
+        Allocation allocOut = Allocation.createTyped(RS, allocIn.getType());
+
+
+    }
+
 
     /**Fonction d'application d'une matrice de convolution
      *
