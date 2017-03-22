@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import static android.R.attr.x;
 import static android.app.Activity.RESULT_OK;
 
 
@@ -121,7 +122,8 @@ public class MainActivity extends Activity {
                     break;
                 //Egaliser l'hitogramme de l'image.
                 case EGALISER:
-                    _img.set_bmp(ImageEdit.egaliser(_img.get_bmp()));
+                    _img.set_bmp(ImageEdit.egaliserSrc(_img.get_bmp(),getApplicationContext()));
+
                     break;
                 //diminuer le contrates de l'image
                 case DIM_CONTRASTE:
@@ -134,14 +136,16 @@ public class MainActivity extends Activity {
                 //test des nouvelles modification n'ayant pas encore de boutons attitrés
 
                 case TEST:
-                    float matrice[][] = new float[3][3];
-                    for(int i =0;i<3;i++)
+                    float x = 101;
+                    float matrice[][] = new float[(int)x][(int)x];
+                    for(int i =0;i<x;i++)
                     {
-                        for(int j = 0;j<3;j++)
+                        for(int j = 0;j<x;j++)
                         {
-                            matrice[i][j] = 1;
+                            matrice[i][j] = 1.0f/(x*x);
                         }
                     }
+
                     /*matrice[0][0] = -1;
                     matrice[0][1] = -1;
                     matrice[0][2] = -1;
@@ -151,6 +155,7 @@ public class MainActivity extends Activity {
                     matrice[2][0] = -1;
                     matrice[2][1] = -1;
                     matrice[2][2] = -1;*/
+                    Log.i("convol","" + matrice[2][2]);
                     _img.set_bmp(ImageEdit.convolutionScr(_img.get_bmp(),matrice,getApplicationContext()));
                     break;
             }

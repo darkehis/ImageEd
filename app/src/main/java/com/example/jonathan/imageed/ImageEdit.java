@@ -386,13 +386,24 @@ public class ImageEdit {
 
     }
 
-    public static Bitmap EgaliserSrc(Bitmap bmp,Context context)
+    /**Fonction d'appel du script d'égalisation de constraste: A TESTER
+     *
+     * @param bmp le bitmap à modifier
+     * @param context
+     * @return
+     */
+
+    public static Bitmap egaliserSrc(Bitmap bmp,Context context)
     {
         Bitmap bmp2 = bmp.copy(bmp.getConfig(),true);
 
 
         //Classe d'acces à la couche renderscript.
         RenderScript RS = RenderScript.create(context);
+
+        //Creéation du cript.
+        ScriptC_egaliser script = new ScriptC_egaliser(RS);
+
 
         //Allocation correspondante au bitmap de départ.
         Allocation allocIn;
@@ -402,6 +413,41 @@ public class ImageEdit {
         //Allocation correspondante au bitmap resultat
         Allocation allocOut = Allocation.createTyped(RS, allocIn.getType());
 
+        //l'histogram et l'histogram cumulé
+        float[] histo = new float[256];
+        float[] cumul = new float[256];
+
+
+        //création de l'histogram;
+        Allocation histoAll = Allocation.createSized(RS,Element.F32(RS),256);
+        script.set_histo(histoAll);
+        script.set_taille_image(bmp.getWidth()*bmp.getHeight());
+
+        script.forEach_calculHisto(allocIn,allocOut);
+
+
+        //récupération de l'histogram.
+        histoAll.copy1DRangeTo(0,256,histo);
+
+        //calcul de l'histogramme  cumulé.
+        cumul[0] = histo[0];
+        for(int i = 1;i< histo.length;i++)
+        {
+            cumul[i] = cumul[i-1] + histo[i];
+        }
+
+        Allocation cumulAll = Allocation.createSized(RS,Element.F32(RS),256);
+
+        cumulAll.copy1DRangeFrom(0,256,cumul);
+
+        script.set_cumul(cumulAll);
+
+        script.forEach_egaliser(allocIn,allocOut);
+
+
+        allocOut.copyTo(bmp2);
+
+        return bmp2;
 
     }
 
@@ -458,13 +504,12 @@ public class ImageEdit {
             }
         }
 
+
         //Allocation correspondante à la matrice noyau.
         Allocation matAll = Allocation.createSized(RS,Element.F32(RS),taille);
         matAll.copy1DRangeFrom(0,taille,matrix1D);
 
         script.set_matrice2(matAll);
-
-        script.set_matrice(matrix1D);
 
         script.set_img(img);
         script.set_dim(dim);
@@ -474,7 +519,10 @@ public class ImageEdit {
         script.set_taille(taille);
         script.set_total(total);
 
+
+
         script.forEach_root(allocIn,allocOut);
+
 
         allocOut.copyTo(bmp2);
 
@@ -507,7 +555,6 @@ public class ImageEdit {
         double zoom = (double)w/(double)wSrc;
 
 
-        Log.i("zoom","check 3" + zoom);
         //variables
         //les coordonnées du pixel en cours, puis les coordonnés dans l'ancienne image des pixels utilisée pour la création d'un nouveau pixel
         int x,y,x1,x2,x3,x4,y1,y2,y3,y4;

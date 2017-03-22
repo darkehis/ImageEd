@@ -96,6 +96,8 @@ public class ChoixModif extends Activity {
                 float t = (barre.getProgress()*360)/100;
                 Intent resultat  = new Intent();
                 resultat.putExtra("modif",MainActivity.TEST);
+                setResult(RESULT_OK,resultat);
+                finish();
             }
         });
 

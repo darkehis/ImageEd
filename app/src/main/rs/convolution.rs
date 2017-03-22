@@ -3,8 +3,12 @@
 
 
 
-float matrice[];
+//A faire retenir les nouvelle valeur dans une allocation puis reechelonner de facon sympas
+
 rs_allocation matrice2;
+
+rs_allocation nouvVal;
+
 int taille;
 int dim;
 int centre;
@@ -24,7 +28,6 @@ void root(const uchar4* v_in, uchar4* v_out, uint32_t x, uint32_t y)
         for(int i =0;i<taille;i++)
         {
                 coul += rsGetElementAt_float(matrice2,i)*rsUnpackColor8888(rsGetElementAt_uchar4(img,x+(i%dim)-centre,y+(i/dim) - centre));
-
         }
     }
     else
@@ -38,3 +41,4 @@ void root(const uchar4* v_in, uchar4* v_out, uint32_t x, uint32_t y)
     *v_out = rsPackColorTo8888(coul);
 
 }
+
