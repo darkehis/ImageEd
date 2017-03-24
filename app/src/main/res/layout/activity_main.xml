@@ -15,62 +15,27 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/lay_img"
-        android:layout_above="@+id/bout_mod"
-        android:layout_marginBottom="60dp">
+        android:layout_above="@+id/textView1">
 
     </FrameLayout>
 
-    <Button
-        android:text=""
+
+    <SeekBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/bout_mod"
+        android:id="@+id/seekBar1"
+        android:max="400"
+        android:progress="10"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:minHeight="50dp"
-        android:minWidth="50dp"
-        android:background="@android:drawable/ic_input_add" />
+        android:layout_alignParentEnd="true" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/bout_gal"
-        android:layout_below="@+id/lay_img"
-        android:layout_alignParentEnd="true"
-        android:background="@android:drawable/ic_menu_gallery"
-        android:minWidth="50dp"
-        android:minHeight="50dp"/>
-
-    <Button
-        android:text=""
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/bout_phot"
-        android:elevation="0dp"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_above="@+id/bout_gal"
-        android:layout_alignParentEnd="true"
-        android:minWidth="50dp"
-        android:minHeight="50dp"
-        android:background="@android:drawable/ic_menu_camera" />
-
-    <Button
-        android:text="Réinitialiser"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/bout_ori"
-        android:elevation="0dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/bout_ori"
-        android:layout_alignParentStart="true"
-        android:id="@+id/bout_undo"
-        android:minHeight="50dp"
-        android:minWidth="50dp"
-        android:background="@android:drawable/ic_menu_close_clear_cancel"
-        android:backgroundTint="@color/colorAccent" />
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="100dp"
+        android:layout_height="20dp"
+        android:layout_above="@+id/seekBar1"
+        android:layout_centerHorizontal="true"
+        android:text="Contraste"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small" />
 </RelativeLayout>

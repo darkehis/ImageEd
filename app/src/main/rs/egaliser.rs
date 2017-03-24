@@ -10,12 +10,16 @@ int taille_image;
 
 void calculHisto(const uchar4* in,uchar4* out,uint32_t x,uint32_t y)
 {
-    //avant tout il faut convertir les couleur rgb en couleur hsv
     float4 coul = {0.0f,0.0f,0.0f,0.0f};
     coul = rsUnpackColor8888(*in);
-    int lum = max((int)coul.r,(int)coul.g);
-    lum = max(lum,(int)coul.b);
-    int val = rsGetElementAt_int(histo,lum);
+    float lum = fmax(coul.r,coul.g);
+    lum = fmax(lum,coul.b);
+    int ind = floor(lum*255);
+    double val = rsGetElementAt_double(histo,ind);
+    rsSetElementAt_double(histo,val+1,ind);
+
+
+
 }
 
 
@@ -28,108 +32,112 @@ void egaliser(const uchar4* in,uchar4* out,uint32_t x,uint32_t y)
     float4 coul = {0.0f,0.0f,0.0f,0.0f};
     coul = rsUnpackColor8888(*in);
 
-    float cMax = fmax(coul.r,coul.g);
-    cMax = fmax(cMax,coul.b);
-    int lum = (int)cMax;
-    float v = ((float)(lum))/((float)(255));
-    float cMin = fmin(coul.r,coul.g);
-    cMin = fmin(cMin,coul.b);
+    float cMax = max(coul.r,coul.g);
+    cMax = max(cMax,coul.b);
+    int ind = floor(cMax*255);
+    float v = cMax;
+    float cMin = min(coul.r,coul.g);
+    cMin = min(cMin,coul.b);
     float d = cMax - cMin;
     float h = 0;
 
-
-    if(cMax != 0)
+    if(d != 0)
     {
 
         if(cMax == coul.r)
         {
-            h = 60*fmod(floor((float)(coul.g-coul.b)/(float)d),6);
+            h = (coul.g-coul.b)/d;
+            //rsDebug("R",h);
 
 
         }
         else if(cMax == coul.g)
         {
 
-            h = 60*(floor((float)(coul.b-coul.r)/(float)d)+2);
+            h = (coul.b-coul.r)/d+2;
+            //rsDebug("G",h);
         }
 
         else if (cMax == coul.b)
         {
-            h = 60*(floor((float)(coul.r-coul.g)/(float)d)+4);
-
-
+            h =(coul.r-coul.g)/d + 4;
+            //rsDebug("B",h);
         }
 
+        h*=60;
+        if(h<0)
+            h+=360;
 
     }
+
+
 
     float s = 0;
     if(cMax != 0)
     {
-        s = ((float)d)/((float)cMax);
+        s = d/cMax;
     }
 
-    rsGetElementAt(cumul,lum);
 
+    float nV = (float)(rsGetElementAt_double(cumul,ind))/(float)taille_image;
+    nV = v;
 
-    int val = rsGetElementAt(histo,lum);
-
-
-    int nouvLum = floor(((float)(rsGetElementAt_int(cumul,val)))/taille_image);
-    int nV = ((float)nouvLum)/((float)255);
-
-    //recreation de la couleur rgb;
 
 
     float r,g,b;
-    float c = v*s;
-    float m = v-c;
+    float hh = h/60;
+    int hE = floor(hh);
+    float hD = hh- hE;
 
-    float X = c*(1 - fabs(fmod(h/60,2)-1));
+    float p = nV*(1.0-s);
+    float q = nV*(1.0-s*hD);
+    float t = nV*(1.0- s*(1-hD));
 
-    int rapport = floor(h/60);
-    switch(rapport)
+    switch(hE)
     {
         case 0:
-        r = c;
-        g = X;
-        b = 0;
+        r = v;
+        g = t;
+        b = p;
         break;
 
         case 1:
-        r = X;
-        g = c;
-        b = 0;
+        r = q;
+        g = v;
+        b = p;
         break;
 
         case 2:
-        r = 0;
-        g = c;
-        b = x;
+        r = p;
+        g = v;
+        b = t;
         break;
 
         case 3:
-        r = 0;
-        g = X;
-        b = c;
+        r = p;
+        g = q;
+        b = v;
         break;
 
         case 4:
-        r = X;
-        g = 0;
-        b = c;
+        r = t;
+        g = p;
+        b = v;
 
         break;
 
         case 5:
-        r = c;
-        g = 0;
-        b = X;
+        r = v;
+        g = p;
+        b = q;
+
+
 
         break;
     }
 
-    float4 nouvCoul = {floor((r + m)*255),floor((g+m)*255),floor((b+m)*255),255};
+
+    float4 nouvCoul = {r,g,b,1.0f};
 
     *out = rsPackColorTo8888(nouvCoul);
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
@@ -107,22 +108,31 @@ public class ImageEdit {
     /**
      * Fonction de zoom de l'image
      *
-     * @param bmp le bitmap à modifier
+     * @param bmpPrec le bitmap precedent
+     * @param bmpOri le bitmap d'origine
      * @param w la largeur du nouveau bitmap (la taille d'affichage de MonImage)
      * @param h la hauteur du nouveau bitmap (la taille d'affichage de MonImage)
+     * @param inter l'intersection de l'ancien et du nouveau rectangle si ceux-ci sont de même taille: evite de tout rezoomer
      * @param context le context de l'application
      * @return la bitmap modifié
      */
 
-    public static Bitmap zoomScr(Bitmap bmp,int w,int h, Context context)
+    public static Bitmap zoomScr(Bitmap bmpPrec,Bitmap bmpOri, int w, int h, Rect inter ,Context context)
     {
 
         //Déclaration du bitmap résultat
-        Bitmap bmp2 = Bitmap.createBitmap(w,h,bmp.getConfig());
+        Bitmap bmp2 = Bitmap.createBitmap(w,h,bmpOri.getConfig());
 
-        //Log.i("zoomSrc","on a:" + bmp.getWidth() + ":" + bmp2.getWidth());
+        if(inter.left != -2)
+        {
+            bmp2 = bmpPrec.copy(bmpPrec.getConfig(),true);
+            bmp2 = Bitmap.createBitmap(bmpPrec,inter.left,inter.top,inter.width(),inter.height());
+            //Bitmap.
+        }
 
-        float zoom = (float) (w)/(float)(bmp.getWidth());
+        Log.i("rectangle","" + inter.left + "," + inter.top + "," + inter.top + "," + inter.bottom);
+
+        float zoom = (float) (w)/(float)(bmpOri.getWidth());
 
         //RenderScript RS = RenderScript.create(context);
 
@@ -135,13 +145,17 @@ public class ImageEdit {
         ScriptC_zoom script = new ScriptC_zoom(RS);
 
 
-        Allocation origine = Allocation.createFromBitmap(RS,bmp, Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
+        Allocation origine = Allocation.createFromBitmap(RS,bmpOri, Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
 
 
         //affectation des differents paramètres du script
         script.set_origin(origine);
-        script.set_h_origin(bmp.getHeight());
-        script.set_w_origin(bmp.getWidth());
+        script.set_h_origin(bmpOri.getHeight());
+        script.set_w_origin(bmpOri.getWidth());
+        script.set_left(inter.left);
+        script.set_top(inter.top);
+        script.set_right(inter.right);
+        script.set_bottom(inter.bottom);
         script.set_zoom(zoom);
 
 
@@ -414,12 +428,16 @@ public class ImageEdit {
         Allocation allocOut = Allocation.createTyped(RS, allocIn.getType());
 
         //l'histogram et l'histogram cumulé
-        float[] histo = new float[256];
-        float[] cumul = new float[256];
+        double[] histo = new double[256];
+        double[] cumul = new double[256];
+
 
 
         //création de l'histogram;
-        Allocation histoAll = Allocation.createSized(RS,Element.F32(RS),256);
+        Allocation histoAll = Allocation.createSized(RS,Element.F64(RS),256);
+        histoAll.copy1DRangeFrom(0,256,new double[256]);
+
+
         script.set_histo(histoAll);
         script.set_taille_image(bmp.getWidth()*bmp.getHeight());
 
@@ -427,7 +445,11 @@ public class ImageEdit {
 
 
         //récupération de l'histogram.
-        histoAll.copy1DRangeTo(0,256,histo);
+
+
+        //histoAll.copyTo(histo);
+        histoAll.copyTo(histo);
+
 
         //calcul de l'histogramme  cumulé.
         cumul[0] = histo[0];
@@ -436,7 +458,7 @@ public class ImageEdit {
             cumul[i] = cumul[i-1] + histo[i];
         }
 
-        Allocation cumulAll = Allocation.createSized(RS,Element.F32(RS),256);
+        Allocation cumulAll = Allocation.createSized(RS,Element.F64(RS),256);
 
         cumulAll.copy1DRangeFrom(0,256,cumul);
 

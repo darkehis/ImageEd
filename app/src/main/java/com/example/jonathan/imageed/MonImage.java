@@ -80,7 +80,7 @@ public class MonImage extends ImageView {
                     }
                     else if(event.getActionMasked() == MotionEvent.ACTION_UP)
                     {
-                        Log.i("bli","up 1");
+
                         //v.scrollTo(0,0);
 
                     }
@@ -103,6 +103,7 @@ public class MonImage extends ImageView {
                             int h = _rect.height();
                             int w = _rect.width();
 
+                            _ancRect = _rect;
                             _rect = new Rect(x,y,x+w,y+h);
 
                             majRect();
@@ -116,7 +117,7 @@ public class MonImage extends ImageView {
                 {
                     if(event.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN)
                     {
-                        int id = event.getPointerId(1);
+
                         _xS2 = event.getX(1);
                         _yS2 = event.getY(1);
                         _cX = ((_xS1 + _xS2)/2)/_fZoom + _rect.left;
@@ -230,13 +231,39 @@ public class MonImage extends ImageView {
         }
 
 
+        Bitmap bmpOri = Bitmap.createBitmap(1,1, Bitmap.Config.ARGB_8888);
+
+        if(_curBmp != null)
+        {
+            bmpOri = _curBmp.copy(_curBmp.getConfig(),true);
+        }
+
+
 
         _curBmp = Bitmap.createBitmap(_bmp[_numCurBmp],_rect.left,_rect.top,_rect.width(),_rect.height());
 
         if(_rect.width() != _w )
         {
             _fZoom = (float)(_w)/(float)(_rect.width());
-            _curBmp = ImageEdit.zoomScr(_curBmp,_w,_h,_context);
+            //check voir si on ne fait que scroller: ne pas tout rezoomer
+            Rect inter = new Rect();
+            if(_rect.width()  != _ancRect.width())
+            {
+                inter.left = -2;
+                inter.top = -2;
+                inter.right = -1;
+                inter.bottom = -1;
+            }
+            else
+            {
+                inter.left = Math.max(_rect.left,_ancRect.left) - _rect.left;
+                inter.top = Math.max(_rect.top,_ancRect.top) - _rect.top;
+                inter.right = Math.min(_rect.right,_ancRect.right) - _rect.left;
+                inter.bottom  = Math.min(_rect.bottom,_ancRect.bottom) - _rect.top;
+
+            }
+            _curBmp = ImageEdit.zoomScr(bmpOri,_curBmp,_w,_h, inter,_context);
+
         }
 
         setImageBitmap(_curBmp);
@@ -245,8 +272,6 @@ public class MonImage extends ImageView {
     //réinitialisation de l'afficahge au bitmap de base
     public void raz()
     {
-
-        Log.i("zoom","on raz");
         _rect = new Rect(0,0,_w,_h);
         majRect();
     }
@@ -559,6 +584,7 @@ public class MonImage extends ImageView {
 
     //le rectangle que l'on affiche
     protected Rect _rect;
+    protected Rect _ancRect;
 
     protected boolean _isInitialised = false;
 

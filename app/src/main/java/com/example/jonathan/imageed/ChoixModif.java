@@ -74,33 +74,6 @@ public class ChoixModif extends Activity {
             }
         });
 
-        bout = (Button) findViewById(R.id.bout_teinte);
-        bout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SeekBar barre = (SeekBar) findViewById(R.id.bar_teinte);
-                float t = (barre.getProgress()*360)/100;
-                Intent resultat  = new Intent();
-                resultat.putExtra("modif",MainActivity.CHG_TEINTE);
-                resultat.putExtra("teinte",t);
-            }
-        });
-
-        //bouton test: pour l'instant la convolution.
-
-        bout = (Button) findViewById(R.id.bout_test);
-        bout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SeekBar barre = (SeekBar) findViewById(R.id.bar_teinte);
-                float t = (barre.getProgress()*360)/100;
-                Intent resultat  = new Intent();
-                resultat.putExtra("modif",MainActivity.TEST);
-                setResult(RESULT_OK,resultat);
-                finish();
-            }
-        });
-
 
     }
 

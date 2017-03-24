@@ -18,6 +18,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ChoixModif"></activity>
+        <activity android:name=".ChoixConv" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"

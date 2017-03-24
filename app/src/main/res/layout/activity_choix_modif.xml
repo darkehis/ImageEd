@@ -10,53 +10,81 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.jonathan.imageed.ChoixModif">
 
-    <LinearLayout
-        android:orientation="vertical"
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="193dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/frameLayout">
+
+    </FrameLayout>
+
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="87dp">
+        android:layout_below="@+id/frameLayout"
+        android:layout_alignParentStart="true">
 
-        <Button
-            android:text="Griser"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/bout_griser" />
+            android:orientation="vertical" >
 
-        <Button
-            android:text="Egaliser"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/bout_ega" />
+            <Button
+                android:id="@+id/bout_griser"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Griser" />
 
-        <Button
-            android:text="Diminuer Contraste"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/bout_dim_cont" />
+            <Button
+                android:id="@+id/bout_ega"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Egaliser" />
 
-        <Button
-            android:text="Extension Contraste"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/bout_ext_cont" />
+            <Button
+                android:id="@+id/bout_dim_cont"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Diminuer Contraste" />
 
-        <Button
-            android:text="Test"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/bout_test" />
+            <Button
+                android:id="@+id/bout_ext_cont"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Extension Contraste" />
 
-        <SeekBar
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/bar_teinte" />
+            <SeekBar
+                android:id="@+id/bar_ext_cont"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="400"
+                android:progress="10" />
 
-        <Button
-            android:text="Changer teinte"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/bout_teinte" />
-    </LinearLayout>
+            <Button
+                android:id="@+id/bout_teinte"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Changer teinte" />
+
+            <Button
+                android:id="@+id/button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Button" />
+
+            <Button
+                android:id="@+id/button4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Button" />
+
+            <Button
+                android:id="@+id/button5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Button" />
+        </LinearLayout>
+    </ScrollView>
+
 </RelativeLayout>

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -12,6 +13,9 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -37,6 +41,17 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //test
+        int bli = Color.argb(255,120,124,214);
+        float[] bli2 = new float[3];
+        Color.colorToHSV(bli,bli2);
+
+        Log.i("couleur","" + bli2[0] + "," + bli2[1] + "," + bli2[2]);
+
+
+
+        //fin test
+
         //Assignation de la layout à l'activité
         setContentView(R.layout.activity_main);
 
@@ -51,49 +66,6 @@ public class MainActivity extends Activity {
 
 
         //Connexion des boutons.
-
-        //Le bouton amène à l'activité de choix de modifications à apporter à l'image.
-        Button bout = (Button) findViewById(R.id.bout_mod);
-        bout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent intent = new Intent(getBaseContext(),ChoixModif.class);
-                startActivityForResult(intent,MODIF_IMG);
-            }
-
-
-        });
-
-
-        //Bouton qui ramène à l'image de départ
-        bout = (Button) findViewById(R.id.bout_ori);
-        bout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                _img.origine();
-            }
-        });
-
-        //Bouton pour obtenir une photo de l'appareil photo.
-        bout = (Button) findViewById(R.id.bout_phot);
-        bout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                prendrePhoto();
-            }
-        });
-
-        //Bouton pour obtenir une image de la gallerie.
-        bout = (Button) findViewById(R.id.bout_gal);
-        bout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                gallerie();
-
-            }
-        });
-
 
 
 
@@ -136,7 +108,7 @@ public class MainActivity extends Activity {
                 //test des nouvelles modification n'ayant pas encore de boutons attitrés
 
                 case TEST:
-                    float x = 101;
+                    float x = 9;
                     float matrice[][] = new float[(int)x][(int)x];
                     for(int i =0;i<x;i++)
                     {
@@ -279,6 +251,66 @@ public class MainActivity extends Activity {
 
     //chemin d'acces à la photo s'il y en a
     protected String _path;
+
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        //Création d'un MenuInflater qui va permettre d'instancier un Menu XML en un objet Menu
+        MenuInflater inflater = getMenuInflater();
+        //Instanciation du menu XML spécifier en un objet Menu
+        inflater.inflate(R.menu.settings, menu);
+
+        //Il n'est pas possible de modifier l'icône d'en-tête du sous menu via le fichier XML on le fait donc en JAVA
+        //menu.getItem(0).getSubMenu().setHeaderIcon(R.drawable.test);
+
+        return true;
+    }
+
+    //Méthode qui se déclenchera au clic sur un item
+    public boolean onOptionsItemSelected(MenuItem item) {
+        //On regarde quel item a été cliqué grâce à son id et on déclenche une action
+        switch (item.getItemId()) {
+
+            case R.id.modifier:
+                return true;
+
+            case R.id.filtres:
+                Intent intent = new Intent(getBaseContext(),ChoixModif.class);
+                startActivityForResult(intent,MODIF_IMG);
+                return true;
+
+            case R.id.convolutions:
+                Log.i("bli","ok1");
+                Intent intent2 = new Intent(getBaseContext(),ChoixConv.class);
+                Log.i("bli","ok2");
+                startActivityForResult(intent2,MODIF_IMG);
+                Log.i("bli","ok2.5");
+                return true;
+
+            case R.id.undo:
+                return true;
+
+            case R.id.galerie:
+                gallerie();
+                return true;
+
+            case R.id.photos:
+                prendrePhoto();
+                return true;
+
+            case R.id.sauvegarder:
+                return true;
+
+            case R.id.réinitialiser:
+                _img.origine();
+                return true;
+
+            case R.id.quitter:
+                //Pour fermer l'application il suffit de faire finish()
+                finish();
+                return true;
+        }
+        return false;}
 
 
     //les code des request code des intents.
