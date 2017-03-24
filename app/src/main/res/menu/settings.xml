@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/modifier"
+        android:title="Modifier">
+
+        <menu android:id="@+id/sousmenu">
+            <item android:id="@+id/filtres"
+                android:title="Filtres"   />
+
+            <item android:id="@+id/convolutions"
+                android:title="Convolutions"  />
+        </menu>
+    </item>
+
+    <item android:id="@+id/undo"
+        android:title="Undo" />
+
+    <item android:id="@+id/galerie"
+        android:title="Galerie"/>
+
+    <item android:id="@+id/photos"
+        android:title="Prendre une photo"/>
+
+    <item android:id="@+id/sauvegarder"
+        android:title="Sauvegarder"/>
+
+    <item android:id="@+id/réinitialiser"
+        android:title="Réinitialiser"/>
+
+    <item android:id="@+id/quitter"
+        android:title="Quitter" />
+
+</menu>

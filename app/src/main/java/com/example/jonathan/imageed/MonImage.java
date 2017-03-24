@@ -231,12 +231,12 @@ public class MonImage extends ImageView {
         }
 
 
-        Bitmap bmpOri = Bitmap.createBitmap(1,1, Bitmap.Config.ARGB_8888);
+        Bitmap bmpOri = Bitmap.createBitmap(_w,_h, Bitmap.Config.ARGB_8888);
 
-        if(_curBmp != null)
+        /*if(_curBmp != null)
         {
             bmpOri = _curBmp.copy(_curBmp.getConfig(),true);
-        }
+        }*/
 
 
 
@@ -256,12 +256,26 @@ public class MonImage extends ImageView {
             }
             else
             {
-                inter.left = Math.max(_rect.left,_ancRect.left) - _rect.left;
-                inter.top = Math.max(_rect.top,_ancRect.top) - _rect.top;
-                inter.right = Math.min(_rect.right,_ancRect.right) - _rect.left;
-                inter.bottom  = Math.min(_rect.bottom,_ancRect.bottom) - _rect.top;
+                /*inter.left = Math.max(_rect.left,_ancRect.left);
+                inter.top = Math.max(_rect.top,_ancRect.top);
+                inter.right = Math.min(_rect.right,_ancRect.right);
+                inter.bottom  = Math.min(_rect.bottom,_ancRect.bottom);*/
+                boolean b = inter.setIntersect(_rect,_ancRect);
 
             }
+
+            //le rectangle à copier du bitmap précédent
+            Rect recCop = new Rect();
+            recCop.left = inter.left - _ancRect.left;
+            recCop.top = inter.left - _ancRect.top;
+            recCop.right = recCop.left + (int)Math.floor(inter.width() * (_w/_rect.width()));
+            recCop.bottom = recCop.top + (int)Math.floor(inter.height() * (_h/_rect.height()));
+
+            Bitmap bmpCop = Bitmap.createBitmap(_curBmp,recCop.left,recCop.top,recCop.width(),recCop.height());
+
+
+
+
             _curBmp = ImageEdit.zoomScr(bmpOri,_curBmp,_w,_h, inter,_context);
 
         }
