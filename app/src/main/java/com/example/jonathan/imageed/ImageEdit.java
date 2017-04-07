@@ -120,21 +120,18 @@ public class ImageEdit {
     public static Bitmap zoomScr(Bitmap bmpPrec,Bitmap bmpOri, int w, int h, Rect inter ,Context context)
     {
 
+        Log.i("rectangle","on zoom vindieu");
         //Déclaration du bitmap résultat
         Bitmap bmp2 = Bitmap.createBitmap(w,h,bmpOri.getConfig());
 
         if(inter.left != -2)
         {
             bmp2 = bmpPrec.copy(bmpPrec.getConfig(),true);
-            bmp2 = Bitmap.createBitmap(bmpPrec,inter.left,inter.top,inter.width(),inter.height());
-            //Bitmap.
         }
-
-        Log.i("rectangle","" + inter.left + "," + inter.top + "," + inter.top + "," + inter.bottom);
 
         float zoom = (float) (w)/(float)(bmpOri.getWidth());
 
-        //RenderScript RS = RenderScript.create(context);
+
 
         RenderScript RS = RenderScript.create(context);
         Allocation allocIn;
@@ -148,6 +145,8 @@ public class ImageEdit {
         Allocation origine = Allocation.createFromBitmap(RS,bmpOri, Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
 
 
+        Log.i("zoom",""+ zoom);
+
         //affectation des differents paramètres du script
         script.set_origin(origine);
         script.set_h_origin(bmpOri.getHeight());
@@ -160,11 +159,9 @@ public class ImageEdit {
 
 
         //Application u script à chaque pixel.
+
+
         script.forEach_root(allocIn,allocOut);
-
-
-
-
         allocOut.copyTo(bmp2);
 
         return bmp2;
@@ -488,23 +485,7 @@ public class ImageEdit {
         Bitmap bmp2 = bmp.copy(bmp.getConfig(),true);
 
 
-        //Classe d'acces à la couche renderscript.
-        RenderScript RS = RenderScript.create(context);
 
-        //Allocation correspondante au bitmap de départ.
-        Allocation allocIn;
-        allocIn = Allocation.createFromBitmap(RS, bmp2, Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
-
-
-        //Allocation correspondante au bitmap resultat
-        Allocation allocOut = Allocation.createTyped(RS, allocIn.getType());
-
-        ScriptC_convolution script = new ScriptC_convolution(RS);
-
-
-
-        //variables dont on a besoin pour faire tourner le script.
-        Allocation img = Allocation.createFromBitmap(RS,bmp, Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
 
         //taille de la matrice
         int dim = matrix.length;
@@ -512,19 +493,57 @@ public class ImageEdit {
         int taille = dim*dim;
         //coordonnées du coeficient centrale de la matrice.
         int centre = dim/2;
-        float total = calculTotal(matrix);
 
+        //calcul de la somme des coeffiecients, renvoie -1 si un coeff est négatif
+        float total = calculTotal(matrix);
 
 
         //Transformation de la matrice en tableau de 1 dimension.
         float matrix1D[] = new float[dim*dim];
+
         for(int i =0;i<dim;i++)
         {
             for(int j =0;j<dim;j++)
             {
                 matrix1D[(i*dim)+j] = matrix[i][j];
+                if(total != -1)
+                {
+                    matrix[i][j] = matrix[i][j]/total;
+                }
             }
         }
+
+        if(total == -1)
+        {
+            bmp2 = ImageEdit.griserScr(bmp2,context);
+        }
+
+        Log.i("convol","ok1");
+
+        //Classe d'acces à la couche renderscript.
+        RenderScript RS = RenderScript.create(context);
+
+        //Allocation correspondante au bitmap de départ.
+        Allocation allocIn;
+        allocIn = Allocation.createFromBitmap(RS, bmp2, Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
+
+        Log.i("convol","ok2.1");
+
+        //Allocation intermédiaire au cas ou il faille changer l'intervalle des différents coefficients.
+        Allocation allocInter = Allocation.createSized(RS, Element.F32_4(RS),bmp2.getWidth()*bmp2.getHeight());
+
+        //Allocation correspondante au bitmap resultat
+        Allocation allocOut = Allocation.createTyped(RS, allocIn.getType());
+
+
+        ScriptC_convolution script = new ScriptC_convolution(RS);
+        Log.i("convol","ok2.2");
+
+
+        Log.i("convol","ok2.3");
+
+        //variables dont on a besoin pour faire tourner le script.
+        Allocation img = Allocation.createFromBitmap(RS,bmp, Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
 
 
         //Allocation correspondante à la matrice noyau.
@@ -541,11 +560,24 @@ public class ImageEdit {
         script.set_taille(taille);
         script.set_total(total);
 
+        Log.i("convol","ok3");
 
+        script.forEach_root(allocIn,allocInter);
+        script.destroy();
+        RS.finish();
 
-        script.forEach_root(allocIn,allocOut);
+        Log.i("convol","ok4");
 
+        ScriptC_intervalle scriptInter =  new ScriptC_intervalle(RS);
+        if(total == -1)
+        {
+            scriptInter.set_init(false);
+            scriptInter.forEach_calculerMinMax(allocInter,allocInter);
+            scriptInter.forEach_root(allocInter,allocInter);
+        }
 
+        Log.i("convol","ok5");
+        scriptInter.forEach_toBmp(allocInter,allocOut);
         allocOut.copyTo(bmp2);
 
 
@@ -671,7 +703,10 @@ public class ImageEdit {
         {
             for(int j =0;j<matrix.length;j++)
             {
-                somme+=matrix[i][j];
+                if(matrix[i][j]<0)
+                    return -1;
+                else
+                    somme+=matrix[i][j];
             }
         }
         if(somme == 0)

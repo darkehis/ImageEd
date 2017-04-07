@@ -18,6 +18,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.widget.ImageView;
 
+import static android.R.attr.right;
 import static android.R.attr.x;
 import static android.R.attr.y;
 import static android.R.id.list;
@@ -45,6 +46,7 @@ public class MonImage extends ImageView {
 
         _bmp = new Bitmap[_nbBmp];
         _numCurBmp = 0;
+        _nbRestau = 0;
 
 
         _bmp[_numCurBmp] = _bmpBase.copy(_bmpBase.getConfig(),true);
@@ -142,6 +144,7 @@ public class MonImage extends ImageView {
                         nW = (int)(_rect.width()/zoom);
                         nH = (int)(_rect.height()/zoom);
 
+                        _ancRect = _rect;
                         _rect = new Rect((int)(_cX - nW/2),(int)(_cY - nH/2),(int)(_cX + nW/2),(int)(_cY + nH/2));
 
                         //Log.i("zoom","on a:" + _rect.left + "," + _rect.top + "," + _rect.right + ","  + _rect.bottom);
@@ -184,6 +187,7 @@ public class MonImage extends ImageView {
         //_rect = new Rect(0,0,(int)(_w/2),(int)(_h/2));
 
         _rect = new Rect(0,0,_w,_h);
+        _ancRect = new Rect(-1,-1,0,0);
 
         majRect();
 
@@ -196,11 +200,10 @@ public class MonImage extends ImageView {
     public void majRect()
     {
         //d'abord on check les bord du rectangle pour qu'il ne dépasse pas
-        //Log.i("rect","ok" + _rect.left + "," + _rect.top + ":" + _bmp.getWidth() + "," + _bmp.getHeight());
 
 
         //commentaire
-        //Log.i("maj_rect","on maj");
+        Log.i("maj_rect","on maj");
         if(_rect.width()>_bmpBase.getWidth())
         {
             //Log.i("maj_rect","trop large");
@@ -231,52 +234,72 @@ public class MonImage extends ImageView {
         }
 
 
-        Bitmap bmpOri = Bitmap.createBitmap(_w,_h, Bitmap.Config.ARGB_8888);
+        Bitmap bmpPrec = Bitmap.createBitmap(_w,_h, Bitmap.Config.ARGB_8888);
 
-        /*if(_curBmp != null)
+        //Si l'on doit appliquer un zoom
+        if(_rect.width() != _w)
         {
-            bmpOri = _curBmp.copy(_curBmp.getConfig(),true);
-        }*/
 
-
-
-        _curBmp = Bitmap.createBitmap(_bmp[_numCurBmp],_rect.left,_rect.top,_rect.width(),_rect.height());
-
-        if(_rect.width() != _w )
-        {
+            Bitmap bmpOri = Bitmap.createBitmap(_bmp[_numCurBmp],_rect.left,_rect.top,_rect.width(),_rect.height());
+            //on calcul le facteur de zoom: basé sur la largeure
             _fZoom = (float)(_w)/(float)(_rect.width());
+
             //check voir si on ne fait que scroller: ne pas tout rezoomer
+            //
+            Rect recDest = new Rect();
             Rect inter = new Rect();
-            if(_rect.width()  != _ancRect.width())
+            //si l'on doit changer de facteur de zoom on recalcul tout
+            if(_rect.width()  != _ancRect.width()|| true)
             {
-                inter.left = -2;
-                inter.top = -2;
-                inter.right = -1;
-                inter.bottom = -1;
+                recDest.left = -2;
+                recDest.top = -2;
+                recDest.right = -1;
+                recDest.bottom = -1;
+
+                _curBmp = ImageEdit.zoomScr(bmpPrec,bmpOri,_w,_h, recDest,_context);
             }
-            else
+            //sinon on ne realcul que la bande à rezoomer.
+           /* else
             {
-                /*inter.left = Math.max(_rect.left,_ancRect.left);
-                inter.top = Math.max(_rect.top,_ancRect.top);
-                inter.right = Math.min(_rect.right,_ancRect.right);
-                inter.bottom  = Math.min(_rect.bottom,_ancRect.bottom);*/
+                //on prend l'intersection des 2 rectangles: l'ancien et le nouveau
                 boolean b = inter.setIntersect(_rect,_ancRect);
 
-            }
-
-            //le rectangle à copier du bitmap précédent
-            Rect recCop = new Rect();
-            recCop.left = inter.left - _ancRect.left;
-            recCop.top = inter.left - _ancRect.top;
-            recCop.right = recCop.left + (int)Math.floor(inter.width() * (_w/_rect.width()));
-            recCop.bottom = recCop.top + (int)Math.floor(inter.height() * (_h/_rect.height()));
-
-            Bitmap bmpCop = Bitmap.createBitmap(_curBmp,recCop.left,recCop.top,recCop.width(),recCop.height());
 
 
+                //le rectangle à copier du bitmap précédent
+                Rect recCop = new Rect();
+                recCop.left = inter.left - _ancRect.left;
+                recCop.top = inter.top - _ancRect.top;
+                recCop.right = recCop.left + (int)Math.floor(inter.width() * _fZoom);
+                recCop.bottom = recCop.top + (int)Math.floor(inter.height() * _fZoom);
 
 
-            _curBmp = ImageEdit.zoomScr(bmpOri,_curBmp,_w,_h, inter,_context);
+                //le rectangle de destination
+                recDest.left = inter.left - _rect.left;
+                recDest.top = inter.top - _rect.top;
+                recDest.right = recDest.left + recCop.width();
+                recDest.bottom = recDest.top + recCop.height();
+
+
+                Log.i("rectangle","ancien:" + recCop.left + "," + recCop.top + "," + recCop.right + "," + recCop.bottom + ": nouveau:" + recDest.left + "," + recDest.top + "," + recDest.right + "," + recDest.bottom + ": inter:" + inter.left + "," + inter.top + "," + inter.right + "," + inter.bottom);
+
+                //test
+                bmpPrec = Bitmap.createBitmap(_w,_h, Bitmap.Config.ARGB_8888);
+                Canvas can = new Canvas(bmpPrec);
+                can.drawBitmap(_curBmp,recCop,recDest,null);
+                //_curBmp = bmpPrec;
+                _curBmp = ImageEdit.zoomScr(bmpPrec,bmpOri,_w,_h, recDest,_context);
+                //test
+
+            }*/
+
+            //_curBmp = ImageEdit.zoomScr(bmpPrec,bmpOri,_w,_h, recDest,_context);
+
+        }
+        else
+        {
+
+            _curBmp = Bitmap.createBitmap(_bmp[_numCurBmp],_rect.left,_rect.top,_rect.width(),_rect.height());
 
         }
 
@@ -463,10 +486,8 @@ public class MonImage extends ImageView {
         if(_numCurBmp>0)
         {
             _numCurBmp--;
-        }
-        majRect();
-        if(_numCurBmp>0)
-        {
+            _nbRestau++;
+            majRect();
             return true;
         }
         else
@@ -479,13 +500,11 @@ public class MonImage extends ImageView {
 
     public boolean restaurer()
     {
-        if(_numCurBmp<_nbBmp-1)
+        if(_nbRestau>0)
         {
             _numCurBmp++;
-        }
-        majRect();
-        if(_numCurBmp<_nbBmp-1)
-        {
+            _nbRestau--;
+            majRect();
             return true;
         }
         else
@@ -588,6 +607,9 @@ public class MonImage extends ImageView {
 
     //le nombre de bitmap maximum retenus
     protected final int _nbBmp = 10;
+
+    //le nombr;e de restauration possible
+    protected int _nbRestau;
 
 
 

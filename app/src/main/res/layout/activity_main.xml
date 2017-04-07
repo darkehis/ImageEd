@@ -11,6 +11,15 @@
     tools:context="com.example.jonathan.imageed.MainActivity"
     android:background="#000000">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#3B3B3B"
+        android:elevation="4dp"
+        android:theme="@style/CustomActionBar"
+        />
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

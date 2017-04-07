@@ -1,6 +1,8 @@
 package com.example.jonathan.imageed;
 
 import android.app.Activity;
+import android.content.ContextWrapper;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -10,24 +12,33 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.view.ContextThemeWrapper;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Random;
 
+import static android.R.attr.dial;
 import static android.R.attr.x;
 import static android.app.Activity.RESULT_OK;
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 
 
 /**L'activité principale de l'application.
@@ -35,25 +46,20 @@ import static android.app.Activity.RESULT_OK;
  *
  */
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //test
-        int bli = Color.argb(255,120,124,214);
-        float[] bli2 = new float[3];
-        Color.colorToHSV(bli,bli2);
-
-        Log.i("couleur","" + bli2[0] + "," + bli2[1] + "," + bli2[2]);
-
-
-
-        //fin test
 
         //Assignation de la layout à l'activité
         setContentView(R.layout.activity_main);
+
+
+        //Ajout de la barre d'outil
+        Toolbar barreO = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(barreO);
 
         //Création de l'image de départ dans une view de type: MonImage
         final Bitmap bmp = BitmapFactory.decodeResource(getResources(),R.drawable.test);
@@ -64,8 +70,9 @@ public class MainActivity extends Activity {
         //Ajout de la view à la layout.
         lay.addView(_img);
 
+        //test
 
-        //Connexion des boutons.
+        //fin tets
 
 
 
@@ -108,7 +115,7 @@ public class MainActivity extends Activity {
                 //test des nouvelles modification n'ayant pas encore de boutons attitrés
 
                 case TEST:
-                    float x = 9;
+                    float x = 3;
                     float matrice[][] = new float[(int)x][(int)x];
                     for(int i =0;i<x;i++)
                     {
@@ -127,7 +134,6 @@ public class MainActivity extends Activity {
                     matrice[2][0] = -1;
                     matrice[2][1] = -1;
                     matrice[2][2] = -1;*/
-                    Log.i("convol","" + matrice[2][2]);
                     _img.set_bmp(ImageEdit.convolutionScr(_img.get_bmp(),matrice,getApplicationContext()));
                     break;
             }
@@ -246,6 +252,95 @@ public class MainActivity extends Activity {
         return image;
     }
 
+
+
+    protected void sauvegarder()
+    {
+
+        AlertDialog.Builder fenSauv = new AlertDialog.Builder(this);
+        fenSauv.setTitle("Sauvegarde de l'image");
+        fenSauv.setMessage("Entrez un nom de fichier:");
+        fenSauv.setIcon(android.R.drawable.ic_dialog_alert);
+        final EditText nom = new EditText(this);
+        fenSauv.setView(nom);
+
+        fenSauv.setPositiveButton("Confirmer", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String nomFich = nom.getText().toString();
+                if (!nomFich.equals(""))
+                {
+                    if(ecrireFichier(nomFich))
+                    {
+                        Toast.makeText(getApplicationContext(),"Fichier: " + nomFich + ".jpeg" + " sauvegardé.",Toast.LENGTH_LONG).show();
+                    }
+                    else
+                    {
+                        Toast.makeText(getApplicationContext(),"Erreur de sauvegarde: vérifiez que le fichier n'existe pas déjà.",Toast.LENGTH_LONG).show();
+                    }
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(),"Nom de fichier incorrect.",Toast.LENGTH_LONG).show();
+                }
+
+
+
+
+            }
+        });
+
+        fenSauv.setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+
+               /* .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                })*/
+
+          fenSauv.show();
+    }
+
+
+    protected boolean ecrireFichier(String nom)
+    {
+        String racine = Environment.getExternalStorageDirectory().toString();
+        File doss = new File(racine + "/ImageEd_image");
+        doss.mkdir();
+        String nomFich = nom + ".jpg";
+        File file = new File (doss,nomFich);
+
+        if(file.exists())
+            return  false;
+
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            _img.get_bmp().compress(Bitmap.CompressFormat.JPEG, 90, out);
+            out.flush();
+            out.close();
+            return true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+    }
+
+
+
+
     //l'image view sur laquelle on travaille
     protected MonImage _img;
 
@@ -269,25 +364,27 @@ public class MainActivity extends Activity {
     //Méthode qui se déclenchera au clic sur un item
     public boolean onOptionsItemSelected(MenuItem item) {
         //On regarde quel item a été cliqué grâce à son id et on déclenche une action
+        Intent intent;
         switch (item.getItemId()) {
 
             case R.id.modifier:
                 return true;
 
             case R.id.filtres:
-                Intent intent = new Intent(getBaseContext(),ChoixModif.class);
+                intent = new Intent(getBaseContext(),ChoixModif.class);
                 startActivityForResult(intent,MODIF_IMG);
                 return true;
 
             case R.id.convolutions:
-                Log.i("bli","ok1");
-                Intent intent2 = new Intent(getBaseContext(),ChoixConv.class);
-                Log.i("bli","ok2");
-                startActivityForResult(intent2,MODIF_IMG);
-                Log.i("bli","ok2.5");
+                intent = new Intent(getBaseContext(),ChoixConv.class);
+                startActivityForResult(intent,MODIF_IMG);
                 return true;
 
             case R.id.undo:
+                _img.annuler();
+                return true;
+            case R.id.restaurer:
+                _img.restaurer();
                 return true;
 
             case R.id.galerie:
@@ -299,6 +396,7 @@ public class MainActivity extends Activity {
                 return true;
 
             case R.id.sauvegarder:
+                sauvegarder();
                 return true;
 
             case R.id.réinitialiser:

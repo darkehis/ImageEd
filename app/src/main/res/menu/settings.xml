@@ -14,7 +14,10 @@
     </item>
 
     <item android:id="@+id/undo"
-        android:title="Undo" />
+        android:title="Annuler" />
+
+    <item android:id="@+id/restaurer"
+        android:title="Restaurer" />
 
     <item android:id="@+id/galerie"
         android:title="Galerie"/>

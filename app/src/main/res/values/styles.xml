@@ -1,12 +1,13 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="@android:style/Theme.Holo.Light">
-        <!-- Customize your theme here. -->
+
+    <style name="AppTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
         <item name="android:actionBarStyle">@style/CustomActionBar</item>
     </style>
 
 
+    <style name="CustomDialogAlert" parent="@style/Theme.AppCompat.Light.Dialog.Alert">
+    </style>
     <style name="CustomActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
         <item name="android:background">#3B3B3B</item>
         <item name="android:titleTextStyle">@style/CustomTextColor</item>

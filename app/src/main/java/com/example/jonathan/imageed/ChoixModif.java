@@ -44,7 +44,8 @@ public class ChoixModif extends Activity {
             @Override
             public void onClick(View v) {
                 Intent resultat =  new Intent();
-                resultat.putExtra("modif",MainActivity.EGALISER);
+                //ICI test
+                resultat.putExtra("modif",MainActivity.TEST);
                 setResult(RESULT_OK,resultat);
                 finish();
             }
