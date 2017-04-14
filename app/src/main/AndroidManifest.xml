@@ -20,8 +20,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ChoixModif"></activity>
-        <activity android:name=".ChoixConv" />
+        <activity android:name=".ChoixModif"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".ChoixConv"
+            android:screenOrientation="portrait"
+            />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
