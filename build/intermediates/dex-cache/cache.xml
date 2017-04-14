@@ -106,7 +106,7 @@
         jumboMode="true"
         optimize="true"
         revision="24.0.2"
-        sha1="8f76c58c2946fe8b7168987a3fc15ff83e6d7e3a">
+        sha1="b6056c13c9a656cc972301f06390115ee2230846">
         <dex dex="C:\Users\Jonathan\AndroidStudioProjects\ImageEd\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_66e3b05173ff5e553da9246f030ba15df4e937e8\classes.dex" />
     </item>
     <item
