@@ -8,6 +8,7 @@ import android.graphics.Rect;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
+import android.renderscript.Type;
 import android.util.Log;
 
 
@@ -20,6 +21,7 @@ import java.security.AccessController;
 
 
 import static android.graphics.Bitmap.createBitmap;
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 import static android.renderscript.Allocation.createSized;
 
 /**
@@ -464,6 +466,7 @@ public class ImageEdit {
         script.forEach_egaliser(allocIn,allocOut);
 
 
+        Log.i("ega","termine");
         allocOut.copyTo(bmp2);
 
         return bmp2;
@@ -482,6 +485,7 @@ public class ImageEdit {
 
     public static Bitmap convolutionScr(Bitmap bmp, float[][] matrix, Context context)
     {
+        //créatioj du bitmap resultat
         Bitmap bmp2 = bmp.copy(bmp.getConfig(),true);
 
 
@@ -499,6 +503,7 @@ public class ImageEdit {
 
 
         //Transformation de la matrice en tableau de 1 dimension.
+        //et normalisation si possible
         float matrix1D[] = new float[dim*dim];
 
         for(int i =0;i<dim;i++)
@@ -513,12 +518,14 @@ public class ImageEdit {
             }
         }
 
+
+
+        //on travail sur une image en niveaux de gris si le noyau contient des négatifs.
         if(total == -1)
         {
             bmp2 = ImageEdit.griserScr(bmp2,context);
         }
 
-        Log.i("convol","ok1");
 
         //Classe d'acces à la couche renderscript.
         RenderScript RS = RenderScript.create(context);
@@ -527,20 +534,20 @@ public class ImageEdit {
         Allocation allocIn;
         allocIn = Allocation.createFromBitmap(RS, bmp2, Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
 
-        Log.i("convol","ok2.1");
-
         //Allocation intermédiaire au cas ou il faille changer l'intervalle des différents coefficients.
-        Allocation allocInter = Allocation.createSized(RS, Element.F32_4(RS),bmp2.getWidth()*bmp2.getHeight());
+        Allocation allocInter = Allocation.createTyped(RS, Type.createXY(RS,Element.F32_4(RS),bmp2.getWidth(),bmp2.getHeight()));
 
         //Allocation correspondante au bitmap resultat
         Allocation allocOut = Allocation.createTyped(RS, allocIn.getType());
 
 
+
+
+
+
+
+
         ScriptC_convolution script = new ScriptC_convolution(RS);
-        Log.i("convol","ok2.2");
-
-
-        Log.i("convol","ok2.3");
 
         //variables dont on a besoin pour faire tourner le script.
         Allocation img = Allocation.createFromBitmap(RS,bmp, Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
@@ -555,25 +562,27 @@ public class ImageEdit {
         script.set_img(img);
         script.set_dim(dim);
         script.set_centre(centre);
-        script.set_w_img(bmp.getWidth());
-        script.set_h_img(bmp.getHeight());
+        script.set_w_img(bmp2.getWidth());
+        script.set_h_img(bmp2.getHeight());
         script.set_taille(taille);
         script.set_total(total);
 
-        Log.i("convol","ok3");
 
         script.forEach_root(allocIn,allocInter);
-        script.destroy();
-        RS.finish();
-
+        Log.i("convol","ok3.1");
+        Log.i("convol","ok3.2");
         Log.i("convol","ok4");
 
+
         ScriptC_intervalle scriptInter =  new ScriptC_intervalle(RS);
+
+       Log.i("convol","ok4.1");
         if(total == -1)
         {
-            scriptInter.set_init(false);
+            scriptInter.set_initialise(0);
             scriptInter.forEach_calculerMinMax(allocInter,allocInter);
             scriptInter.forEach_root(allocInter,allocInter);
+            Log.i("convol","ok4.4");
         }
 
         Log.i("convol","ok5");
@@ -691,6 +700,25 @@ public class ImageEdit {
     }
 
 
+    public static float[][] getMatMoy(int taille)
+    {
+        float[][] mat = new float[taille][taille];
+        for(int i =0;i<taille;i++)
+        {
+            for(int j = 0;j<taille;j++)
+            {
+                mat[i][j] = -1;
+            }
+        }
+
+
+        mat[1][1] = 8;
+
+
+        return mat;
+    }
+
+
     /**Fonction de calcul de la somme des coeff de la matrice noyau.
      *
      * @param matrix
@@ -718,6 +746,8 @@ public class ImageEdit {
             return somme;
 
     }
+
+
 
 
 }

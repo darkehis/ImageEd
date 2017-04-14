@@ -18,14 +18,19 @@ import android.os.Bundle;
 import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.io.File;
@@ -36,9 +41,11 @@ import java.util.Calendar;
 import java.util.Random;
 
 import static android.R.attr.dial;
+import static android.R.attr.onClick;
 import static android.R.attr.x;
 import static android.app.Activity.RESULT_OK;
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
+import static java.security.AccessController.getContext;
 
 
 /**L'activité principale de l'application.
@@ -67,12 +74,12 @@ public class MainActivity extends AppCompatActivity {
         final int idImg = View.generateViewId();
         _img.setId(idImg);
         FrameLayout lay  = (FrameLayout) findViewById(R.id.lay_img);
+
+
         //Ajout de la view à la layout.
         lay.addView(_img);
 
-        //test
-
-        //fin tets
+        connexionBoutons();
 
 
 
@@ -101,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 //Egaliser l'hitogramme de l'image.
                 case EGALISER:
+
                     _img.set_bmp(ImageEdit.egaliserSrc(_img.get_bmp(),getApplicationContext()));
 
                     break;
@@ -125,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
 
-                    /*matrice[0][0] = -1;
+                    matrice[0][0] = -1;
                     matrice[0][1] = -1;
                     matrice[0][2] = -1;
                     matrice[1][0] = -1;
@@ -133,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
                     matrice[1][2] = -1;
                     matrice[2][0] = -1;
                     matrice[2][1] = -1;
-                    matrice[2][2] = -1;*/
+                    matrice[2][2] = -1;
                     _img.set_bmp(ImageEdit.convolutionScr(_img.get_bmp(),matrice,getApplicationContext()));
                     break;
             }
@@ -361,6 +369,94 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    protected void connexionBoutons()
+    {
+        ImageButton bout;
+
+
+
+        //Bouton de modification des filtres par defaut
+        bout = (ImageButton) findViewById(R.id.bout_modif);
+        bout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(getApplicationContext(),ChoixModif.class);
+                intent.putExtra("appercu",_img.appercu(300));
+                startActivityForResult(intent,MODIF_IMG);
+
+            }
+        });
+
+
+        //bouton pour les filtres peronnalisés
+
+
+        bout = (ImageButton)findViewById(R.id.bout_mat);
+        bout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),ChoixConv.class);
+                intent.putExtra("appercu",_img.appercu(300));
+                startActivityForResult(intent,MODIF_CONV);
+            }
+        });
+
+        //bouton annuler
+
+        bout = (ImageButton)findViewById(R.id.bout_ann);
+        bout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                _img.annuler();
+            }
+        });
+
+        //bouton restaurer
+
+        bout = (ImageButton)findViewById(R.id.bout_rest);
+        bout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                _img.restaurer();
+            }
+        });
+
+
+        //boton origine
+        bout = (ImageButton)findViewById(R.id.bout_origine);
+        bout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                _img.origine();
+            }
+        });
+
+        //bouton appareil photo
+        bout = (ImageButton)findViewById(R.id.bout_photo);
+        bout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                prendrePhoto();
+            }
+        });
+
+
+        //bouton bouton gallerie
+
+
+        //bouton sauvegarder
+
+
+        //bouton quitter
+
+
+
+
+
+
+    }
+
     //Méthode qui se déclenchera au clic sur un item
     public boolean onOptionsItemSelected(MenuItem item) {
         //On regarde quel item a été cliqué grâce à son id et on déclenche une action
@@ -372,12 +468,13 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.filtres:
                 intent = new Intent(getBaseContext(),ChoixModif.class);
+                intent.putExtra("appercu",_img.appercu(300));
                 startActivityForResult(intent,MODIF_IMG);
                 return true;
 
             case R.id.convolutions:
                 intent = new Intent(getBaseContext(),ChoixConv.class);
-                startActivityForResult(intent,MODIF_IMG);
+                startActivityForResult(intent,MODIF_CONV);
                 return true;
 
             case R.id.undo:
@@ -419,8 +516,11 @@ public class MainActivity extends AppCompatActivity {
     public static final int DIM_CONTRASTE = 3;
     public static final int EXT_DYN_CONTRASTE = 4;
     public static final int PRENDRE_PHOTO = 5;
+
+    public static final int MODIF_IMG = 6;
     public static final int GALLERIE = 7;
 
     public static final int TEST = 9;
-    public static final int MODIF_IMG = 6;
+
+    public static final int MODIF_CONV = 10;
 }

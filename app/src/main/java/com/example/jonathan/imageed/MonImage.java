@@ -479,6 +479,35 @@ public class MonImage extends ImageView {
 
     }
 
+    /**
+     *
+     * @return Un appercu du bitmap pour pouvoir prévisualiser les modifications
+     */
+    public Bitmap appercu(int tailleM)
+    {
+        int maxDim,fact,w,h,nW,nH;
+        //l'appercu fera au plus 100 px de long/large;
+
+
+        w = _bmp[_numCurBmp].getWidth();
+        h = _bmp[_numCurBmp].getHeight();
+        maxDim = Math.max(w,h);
+        fact = (maxDim/tailleM)+1;
+        nW = w/fact;
+        nH = h/fact;
+        int[] pix1 = new int[w*h];
+        int[] pix2 = new int[nW*nH];
+
+        _bmp[_numCurBmp].getPixels(pix1,0,w,0,0,w,h);
+        for(int i =0;i<pix2.length;i++)
+        {
+            pix2[i] = pix1[fact*((i/nW)*w + (i%nW))];
+        }
+        return Bitmap.createBitmap(pix2,nW,nH, Bitmap.Config.ARGB_8888);
+
+
+    }
+
 
     //fonction d'annulation et de restauration
     public boolean annuler()

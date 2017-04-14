@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
@@ -22,29 +23,104 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:id="@+id/lay_img"
-        android:layout_above="@+id/textView1">
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
 
     </FrameLayout>
 
-
-    <SeekBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/seekBar1"
-        android:max="400"
-        android:progress="10"
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="false"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/lay_img"
+        android:minHeight="100dp"
+        android:layout_marginTop="-50dp"
+        android:scrollbarAlwaysDrawHorizontalTrack="false">
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="100dp"
-        android:layout_height="20dp"
-        android:layout_above="@+id/seekBar1"
-        android:layout_centerHorizontal="true"
-        android:text="Contraste"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal" >
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_mode_edit_black_24dp"
+                android:id="@+id/bout_modif"
+                android:layout_weight="1"
+                android:alpha="0.7" />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_grid_on_black_24dp"
+                android:id="@+id/bout_mat"
+                android:layout_weight="1"
+                android:alpha="0.7" />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_undo_black_24dp"
+                android:id="@+id/bout_ann"
+                android:layout_weight="1"
+                android:alpha="0.7" />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_redo_black_24dp"
+                android:id="@+id/bout_rest"
+                android:layout_weight="1"
+                android:alpha="0.7" />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_restore_black_24dp"
+                android:id="@+id/bout_origine"
+                android:layout_weight="1"
+                android:alpha="0.7" />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_photo_camera_black_24dp"
+                android:id="@+id/bout_photo"
+                android:layout_weight="1"
+                android:alpha="0.7" />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_insert_photo_black_24dp"
+                android:id="@+id/bout_gal"
+                android:layout_weight="1"
+                android:alpha="0.7" />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_save_black_24dp"
+                android:id="@+id/bout_sauv"
+                android:layout_weight="1"
+                android:alpha="0.7" />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_exit_to_app_black_24dp"
+                android:id="@+id/bout_quitter"
+                android:layout_weight="1"
+                android:alpha="0.7" />
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+
 </RelativeLayout>

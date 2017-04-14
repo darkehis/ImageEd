@@ -3,14 +3,14 @@ apply plugin: 'com.android.application'
 android {
     signingConfigs {
         config {
-            storeFile file('C:/Users/Jonathan/keystore.jks')
+            storeFile file('./keystore.jks')
             keyPassword '123456'
             storePassword '123456'
             keyAlias 'config'
         }
     }
     compileSdkVersion 24
-    buildToolsVersion "24.0.3"
+    buildToolsVersion "24.0.2"
     defaultConfig {
         applicationId "com.example.jonathan.imageed"
         minSdkVersion 22

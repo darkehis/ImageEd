@@ -26,7 +26,6 @@ void calculHisto(const uchar4* in,uchar4* out,uint32_t x,uint32_t y)
 void egaliser(const uchar4* in,uchar4* out,uint32_t x,uint32_t y)
 {
 
-//revoir la conversion de RGB ver HSV
 
 
     float4 coul = {0.0f,0.0f,0.0f,0.0f};
@@ -80,7 +79,7 @@ void egaliser(const uchar4* in,uchar4* out,uint32_t x,uint32_t y)
 
 
     float nV = (float)(rsGetElementAt_double(cumul,ind))/(float)taille_image;
-    nV = v;
+    //nV = v;
 
 
 

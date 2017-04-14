@@ -29,12 +29,17 @@ void root(const uchar4* in,uchar4* out,uint32_t x,uint32_t y) {
         {
           //Operation d'interpolation
 
-                ouF = ((1-(xAbs - xO))*(1-(yAbs - yO)))*(rsUnpackColor8888(rsGetElementAt_uchar4(origin,xO,yO))) + ((1-(xAbs - xO))*(yAbs - yO))*(rsUnpackColor8888(rsGetElementAt_uchar4(origin,xO+1,yO))) + ((1-(yAbs - yO))*(xAbs - xO))*(rsUnpackColor8888(rsGetElementAt_uchar4(origin,xO,yO+1))) + (xAbs - xO)*(yAbs - yO)*(rsUnpackColor8888(rsGetElementAt_uchar4(origin,xO+1,yO+1)));
+                //ouF = ((1-(xAbs - xO))*(1-(yAbs - yO)))*(rsUnpackColor8888(rsGetElementAt_uchar4(origin,xO,yO))) + ((1-(xAbs - xO))*(yAbs - yO))*(rsUnpackColor8888(rsGetElementAt_uchar4(origin,xO+1,yO))) + ((1-(yAbs - yO))*(xAbs - xO))*(rsUnpackColor8888(rsGetElementAt_uchar4(origin,xO,yO+1))) + (xAbs - xO)*(yAbs - yO)*(rsUnpackColor8888(rsGetElementAt_uchar4(origin,xO+1,yO+1)));
+                //ouF = convert_float4(rsGetElementAt_uchar4(origin,xO,yO));
+                //*out = convert_uchar4(((1-(xAbs - xO))*(1-(yAbs - yO)))*(convert_float4(rsGetElementAt_uchar4(origin,xO,yO))) + ((1-(xAbs - xO))*(yAbs - yO))*(convert_float4((rsGetElementAt_uchar4(origin,xO+1,yO))) + ((1-(yAbs - yO))*(xAbs - xO))*(convert_float4((rsGetElementAt_uchar4(origin,xO,yO+1))) + (xAbs - xO)*(yAbs - yO)*(convert_float4((rsGetElementAt_uchar4(origin,xO+1,yO+1)));
+                *out = convert_uchar4(((1-(xAbs - xO))*(1-(yAbs - yO)))*(convert_float4(rsGetElementAt_uchar4(origin,xO,yO))) + ((1-(xAbs - xO))*(yAbs - yO))*(convert_float4((rsGetElementAt_uchar4(origin,xO+1,yO)))) + ((1-(yAbs - yO))*(xAbs - xO))*(convert_float4((rsGetElementAt_uchar4(origin,xO,yO+1))) ) + (xAbs - xO)*(yAbs - yO)*(convert_float4((rsGetElementAt_uchar4(origin,xO+1,yO+1)))));
+
         }
+        else
+        {
 
-      *out = rsPackColorTo8888(ouF);
-
-
+            *out = *in;
+        }
 }
 
 
