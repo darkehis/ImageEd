@@ -53,7 +53,7 @@ public class ChoixConv extends Activity {
 
             public void onClick(View v) {
 
-                _curAppercu = ImageEdit.sobelSrc(_appercu,getApplicationContext());
+                _curAppercu = ImageEdit.convolutionScr(_appercu,MatriceGen.laplacien(),getApplicationContext());
                 img.setImageBitmap(_curAppercu);
                 _curModif = MainActivity.LAPLACIEN;
 

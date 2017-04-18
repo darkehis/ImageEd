@@ -161,7 +161,11 @@ public class MainActivity extends AppCompatActivity {
                     _img.set_bmp(ImageEdit.sobelSrc(_img.get_bmp(),getApplicationContext()));
 
                     break;
+                case LAPLACIEN:
 
+                    _img.set_bmp(ImageEdit.convolutionScr(_img.get_bmp(),MatriceGen.laplacien(),getApplicationContext()));
+
+                    break;
 
             }
 
