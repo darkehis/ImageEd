@@ -6,16 +6,20 @@
 //On ne gere que les tableaux de niveaix de gris
 float minV;
 float maxV;
+float maxN;
+float minN;
 int initialise;
 
 
 void root(const float4* in,float4* out, uint32_t x,uint32_t y)
 {
     float val = ((*in).S0 - minV)/(maxV-minV);
-    (*out) = (float4){val,val,val,(*in).S3};
+
+    (*out) = (float4){val,val,val,1.0f};
 
 
 }
+
 
 
 void calculerMinMax(const float4* in,float4* out,uint32_t x,uint32_t y)
@@ -36,13 +40,13 @@ void calculerMinMax(const float4* in,float4* out,uint32_t x,uint32_t y)
         {
             minV = (*in).S0;
         }
-
     }
 }
 
 
 void toBmp(const float4* in,uchar4* out,uint32_t x,uint32_t y)
 {
+
     (*out) = rsPackColorTo8888(*in);
 }
 

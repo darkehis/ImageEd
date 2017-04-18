@@ -16,13 +16,13 @@ import java.lang.annotation.ElementType;
 import java.security.AccessController;
 
 
-//TODO refaire le center lors du zoom
-//TODO convolution : niels
+
 
 
 import static android.graphics.Bitmap.createBitmap;
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 import static android.renderscript.Allocation.createSized;
+import static com.example.jonathan.imageed.R.drawable.test;
 
 /**
  * Created by Jonathan on 20/01/2017.
@@ -101,6 +101,9 @@ public class ImageEdit {
 
 
         allocOut.copyTo(bmp2);
+
+        script.destroy();
+        RS.finish();
         return bmp2;
 
     }
@@ -165,6 +168,10 @@ public class ImageEdit {
 
         script.forEach_root(allocIn,allocOut);
         allocOut.copyTo(bmp2);
+
+
+        script.destroy();
+        RS.finish();
 
         return bmp2;
 
@@ -345,9 +352,6 @@ public class ImageEdit {
     }
 
 
-
-    //TODO: changer en RS: égaliser
-
     /**
      * Fonction d'égalisation de l'histogramme du bitmap à modifier
      *
@@ -399,6 +403,174 @@ public class ImageEdit {
 
     }
 
+
+    public static  Bitmap seuilScr(Bitmap bmp,float seuil, Context context)
+    {
+        Bitmap bmp2 = griserScr(bmp,context);
+
+        //Classe d'acces à la couche renderscript.
+        RenderScript RS = RenderScript.create(context);
+
+        //Creéation du cript.
+        ScriptC_seuiller script = new ScriptC_seuiller(RS);
+
+
+        //Allocation correspondante au bitmap de départ.
+        Allocation allocIn;
+
+        allocIn = Allocation.createFromBitmap(RS, bmp2, Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
+
+        //Allocation correspondante au bitmap resultat
+        Allocation allocOut = Allocation.createTyped(RS, allocIn.getType());
+
+        script.set_seuil(seuil);
+
+        script.forEach_root(allocIn,allocOut);
+
+        allocOut.copyTo(bmp2);
+
+        script.destroy();
+        RS.finish();
+
+        return bmp2;
+
+
+
+
+    }
+
+
+    public static Bitmap sobelSrc(Bitmap bmp, Context context)
+    {
+        Bitmap bmp2 = griserScr(bmp,context);
+
+        //Classe d'acces à la couche renderscript.
+        RenderScript RS = RenderScript.create(context);
+
+        //Creéation du cript.
+        ScriptC_convolution script = new ScriptC_convolution(RS);
+
+
+
+
+
+        //Transformation de la matrice en tableau de 1 dimension.
+
+        float[][] matrix1 = MatriceGen.sobel1();
+        //taille de la matrice
+        int dim = matrix1.length;
+
+        float matrix1D1[] = new float[dim*dim];
+
+        for(int i =0;i<dim;i++)
+        {
+            for(int j =0;j<dim;j++)
+            {
+                matrix1D1[(i*dim)+j] = matrix1[i][j];
+            }
+        }
+
+        float[][] matrix2 = MatriceGen.sobel1();
+        float matrix1D2[] = new float[dim*dim];
+
+        for(int i =0;i<dim;i++)
+        {
+            for(int j =0;j<dim;j++)
+            {
+                matrix1D2[(i*dim)+j] = matrix2[i][j];
+            }
+        }
+
+
+        //nb de coeff de la matrice.
+        int taille = dim*dim;
+        //coordonnées du coeficient centrale de la matrice.
+        int centre = dim/2;
+
+        //calcul de la somme des coeffiecients, renvoie -1 si un coeff est négatif
+        float total = calculTotal(matrix1);
+
+
+        //Allocation correspondante au bitmap de départ.
+        Allocation allocIn;
+
+        allocIn = Allocation.createFromBitmap(RS, bmp2, Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
+
+        //Allocation correspondante au bitmap resultat
+        Allocation allocOut = Allocation.createTyped(RS, allocIn.getType());
+
+        //Allocation intermédiaire au cas ou il faille changer l'intervalle des différents coefficients.
+        Allocation allocInter1 = Allocation.createTyped(RS, Type.createXY(RS,Element.F32_4(RS),bmp2.getWidth(),bmp2.getHeight()));
+
+        //Allocation intermédiaire au cas ou il faille changer l'intervalle des différents coefficients.
+        Allocation allocInter2 = Allocation.createTyped(RS, Type.createXY(RS,Element.F32_4(RS),bmp2.getWidth(),bmp2.getHeight()));
+
+        //Allocation intermédiaire au cas ou il faille changer l'intervalle des différents coefficients.
+        Allocation allocInter3 = Allocation.createTyped(RS, Type.createXY(RS,Element.F32_4(RS),bmp2.getWidth(),bmp2.getHeight()));
+
+        //Allocation correspondante à la matrice noyau.
+        Allocation matAll = Allocation.createSized(RS,Element.F32(RS),taille);
+        matAll.copy1DRangeFrom(0,taille,matrix1D1);
+
+        //variables dont on a besoin pour faire tourner le script.
+        Allocation img = Allocation.createFromBitmap(RS,bmp, Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
+
+        script.set_matrice2(matAll);
+
+        script.set_img(img);
+        script.set_dim(dim);
+        script.set_centre(centre);
+        script.set_w_img(bmp2.getWidth());
+        script.set_h_img(bmp2.getHeight());
+        script.set_taille(taille);
+        script.set_total(total);
+
+
+        script.forEach_root(allocIn,allocInter1);
+
+
+        matAll.copy1DRangeFrom(0,taille,matrix1D2);
+        script.set_matrice2(matAll);
+
+        script.forEach_root(allocIn,allocInter2);
+
+        ScriptC_sobeliser scriptSob = new ScriptC_sobeliser(RS);
+
+        scriptSob.set_img1(allocInter1);
+        scriptSob.set_img2(allocInter2);
+
+        scriptSob.forEach_root(allocInter3,allocInter3);
+
+
+
+
+        ScriptC_intervalle scriptInter =  new ScriptC_intervalle(RS);
+
+
+        if(total == -1)
+        {
+            scriptInter.set_initialise(0);
+            scriptInter.forEach_calculerMinMax(allocInter3,allocInter3);
+            scriptInter.forEach_root(allocInter3,allocInter3);
+
+        }
+
+        scriptInter.forEach_toBmp(allocInter3,allocOut);
+
+
+        allocOut.copyTo(bmp2);
+
+        script.destroy();
+        scriptInter.destroy();
+        RS.finish();
+
+        return bmp2;
+
+
+
+
+    }
+
     /**Fonction d'appel du script d'égalisation de constraste: A TESTER
      *
      * @param bmp le bitmap à modifier
@@ -445,8 +617,6 @@ public class ImageEdit {
 
         //récupération de l'histogram.
 
-
-        //histoAll.copyTo(histo);
         histoAll.copyTo(histo);
 
 
@@ -474,6 +644,7 @@ public class ImageEdit {
     }
 
 
+
     /**Fonction d'application d'une matrice de convolution
      *
      * @param bmp
@@ -481,6 +652,8 @@ public class ImageEdit {
      * @param context
      * @return l'image à laquelle est appliquée la matrice de convolution.
      */
+
+
 
 
     public static Bitmap convolutionScr(Bitmap bmp, float[][] matrix, Context context)
@@ -527,6 +700,9 @@ public class ImageEdit {
         }
 
 
+
+
+
         //Classe d'acces à la couche renderscript.
         RenderScript RS = RenderScript.create(context);
 
@@ -569,30 +745,159 @@ public class ImageEdit {
 
 
         script.forEach_root(allocIn,allocInter);
-        Log.i("convol","ok3.1");
-        Log.i("convol","ok3.2");
-        Log.i("convol","ok4");
+
 
 
         ScriptC_intervalle scriptInter =  new ScriptC_intervalle(RS);
 
-       Log.i("convol","ok4.1");
+
         if(total == -1)
         {
             scriptInter.set_initialise(0);
             scriptInter.forEach_calculerMinMax(allocInter,allocInter);
             scriptInter.forEach_root(allocInter,allocInter);
-            Log.i("convol","ok4.4");
+
         }
 
-        Log.i("convol","ok5");
         scriptInter.forEach_toBmp(allocInter,allocOut);
         allocOut.copyTo(bmp2);
 
 
+
+        script.destroy();
+        RS.finish();
+
         return bmp2;
 
     }
+
+
+
+    public static Bitmap changerTeinteScr(Bitmap bmp, int teinte, Context context)
+    {
+        //Le nouveau bitmap: le result
+        Bitmap bmp2 = bmp.copy(bmp.getConfig(),true);
+
+
+        //création de l'acces  au contexte renderscript.
+        RenderScript RS = RenderScript.create(context);
+
+        //l'allocation du bitmap à modifier
+        Allocation allocIn;
+        allocIn = Allocation.createFromBitmap(RS, bmp, Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
+
+
+        //l'allocation du bitmap resultat.
+        Allocation allocOut = Allocation.createTyped(RS, allocIn.getType());
+
+        //L'objet du script de grisage.
+        ScriptC_teinter script = new ScriptC_teinter(RS);
+
+        script.set_teinte(teinte);
+
+        //l'application du script à chaque pixel.
+        script.forEach_root(allocIn,allocOut);
+
+
+
+        allocOut.copyTo(bmp2);
+
+        script.destroy();
+        RS.finish();
+        return bmp2;
+
+
+    }
+
+    public static Bitmap filtrerTeinte(Bitmap bmp, int teinte, int tolerance,Context context)
+    {
+
+        //Le nouveau bitmap: le result
+        Bitmap bmp2 = bmp.copy(bmp.getConfig(),true);
+
+        Log.i("teinte","" + teinte + "," + tolerance);
+
+
+        //création de l'acces  au contexte renderscript.
+        RenderScript RS = RenderScript.create(context);
+
+        //l'allocation du bitmap à modifier
+        Allocation allocIn;
+        allocIn = Allocation.createFromBitmap(RS, bmp, Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
+
+
+        //l'allocation du bitmap resultat.
+        Allocation allocOut = Allocation.createTyped(RS, allocIn.getType());
+
+        //L'objet du script de grisage.
+        ScriptC_filtrerCouleur script = new ScriptC_filtrerCouleur(RS);
+
+        script.set_teinte(teinte);
+
+        script.set_tolerance(tolerance);
+
+        //l'application du script à chaque pixel.
+        script.forEach_root(allocIn,allocOut);
+
+
+
+        allocOut.copyTo(bmp2);
+
+        script.destroy();
+        RS.finish();
+
+        return bmp2;
+
+
+
+
+    }
+
+
+    public static Bitmap chgLum(Bitmap bmp,float minL,float maxL,Context context )
+    {
+
+        //Le nouveau bitmap: le result
+        Bitmap bmp2 = bmp.copy(bmp.getConfig(),true);
+
+
+        //création de l'acces  au contexte renderscript.
+        RenderScript RS = RenderScript.create(context);
+
+        //l'allocation du bitmap à modifier
+        Allocation allocIn;
+        allocIn = Allocation.createFromBitmap(RS, bmp, Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
+
+
+        //l'allocation du bitmap resultat.
+        Allocation allocOut = Allocation.createTyped(RS, allocIn.getType());
+
+        //L'objet du script de grisage.
+        ScriptC_chgLum script = new ScriptC_chgLum(RS);
+
+        script.set_minL(minL);
+
+        script.set_maxL(maxL);
+
+        //l'application du script à chaque pixel.
+        script.forEach_root(allocIn,allocOut);
+
+
+
+        allocOut.copyTo(bmp2);
+
+        script.destroy();
+        RS.finish();
+
+        return bmp2;
+
+
+
+
+
+
+    }
+
 
 
 
@@ -700,24 +1005,6 @@ public class ImageEdit {
     }
 
 
-    public static float[][] getMatMoy(int taille)
-    {
-        float[][] mat = new float[taille][taille];
-        for(int i =0;i<taille;i++)
-        {
-            for(int j = 0;j<taille;j++)
-            {
-                mat[i][j] = -1;
-            }
-        }
-
-
-        mat[1][1] = 8;
-
-
-        return mat;
-    }
-
 
     /**Fonction de calcul de la somme des coeff de la matrice noyau.
      *
@@ -746,6 +1033,45 @@ public class ImageEdit {
             return somme;
 
     }
+
+
+
+
+    public static Bitmap appercu(Bitmap bmp,int tailleM)
+    {
+        int maxDim,fact,nW,nH;
+        //l'appercu fera au plus tailleM px de long/large;
+        if(bmp.getHeight()<tailleM && bmp.getWidth()<tailleM)
+        {
+            return bmp;
+        }
+        else
+        {
+            int w = bmp.getWidth();
+            int h = bmp.getHeight();
+            maxDim = Math.max(w,h);
+            fact = (maxDim/tailleM)+1;
+            nW = w/fact;
+            nH = h/fact;
+            int[] pix1 = new int[w*h];
+            int[] pix2 = new int[nW*nH];
+
+            bmp.getPixels(pix1,0,w,0,0,w,h);
+            for(int i =0;i<pix2.length;i++)
+            {
+                pix2[i] = pix1[fact*((i/nW)*w + (i%nW))];
+            }
+            return Bitmap.createBitmap(pix2,nW,nH, Bitmap.Config.ARGB_8888);
+
+        }
+
+
+
+
+    }
+
+
+
 
 
 

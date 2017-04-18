@@ -40,7 +40,7 @@ public class MonImage extends ImageView {
 
         //initialisation variables
         setScaleType(ScaleType.CENTER);
-        _bmpBase = bmp; //le bitmap de base:
+        _bmpBase = ImageEdit.appercu(bmp,1500); //le bitmap de base:
 
         //creation du tableau de bitmap à retenir pour pouvoir annuler les modifications
 
@@ -50,6 +50,8 @@ public class MonImage extends ImageView {
 
 
         _bmp[_numCurBmp] = _bmpBase.copy(_bmpBase.getConfig(),true);
+
+
 
 
 
@@ -202,8 +204,6 @@ public class MonImage extends ImageView {
         //d'abord on check les bord du rectangle pour qu'il ne dépasse pas
 
 
-        //commentaire
-        Log.i("maj_rect","on maj");
         if(_rect.width()>_bmpBase.getWidth())
         {
             //Log.i("maj_rect","trop large");
@@ -485,25 +485,7 @@ public class MonImage extends ImageView {
      */
     public Bitmap appercu(int tailleM)
     {
-        int maxDim,fact,w,h,nW,nH;
-        //l'appercu fera au plus 100 px de long/large;
-
-
-        w = _bmp[_numCurBmp].getWidth();
-        h = _bmp[_numCurBmp].getHeight();
-        maxDim = Math.max(w,h);
-        fact = (maxDim/tailleM)+1;
-        nW = w/fact;
-        nH = h/fact;
-        int[] pix1 = new int[w*h];
-        int[] pix2 = new int[nW*nH];
-
-        _bmp[_numCurBmp].getPixels(pix1,0,w,0,0,w,h);
-        for(int i =0;i<pix2.length;i++)
-        {
-            pix2[i] = pix1[fact*((i/nW)*w + (i%nW))];
-        }
-        return Bitmap.createBitmap(pix2,nW,nH, Bitmap.Config.ARGB_8888);
+        return ImageEdit.appercu(_bmp[_numCurBmp],tailleM);
 
 
     }
@@ -591,7 +573,8 @@ public class MonImage extends ImageView {
         return _bmp[_numCurBmp];
     }
 
-    public void set_bmp(Bitmap _bmp) {
+    public void set_bmp(Bitmap bmp) {
+        Bitmap bmp2 = ImageEdit.appercu(bmp,1500);
         if(_numCurBmp == _nbBmp-1)
         {
             for(int i = 0;i<_numCurBmp;i++)
@@ -604,7 +587,7 @@ public class MonImage extends ImageView {
             _numCurBmp++;
 
         }
-        this._bmp[_numCurBmp] = _bmp;
+        this._bmp[_numCurBmp] = bmp2;
         raz();
     }
 

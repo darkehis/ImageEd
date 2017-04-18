@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -45,6 +46,7 @@ import static android.R.attr.onClick;
 import static android.R.attr.x;
 import static android.app.Activity.RESULT_OK;
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
+import static com.example.jonathan.imageed.R.drawable.test;
 import static java.security.AccessController.getContext;
 
 
@@ -65,11 +67,14 @@ public class MainActivity extends AppCompatActivity {
 
 
         //Ajout de la barre d'outil
-        Toolbar barreO = (Toolbar) findViewById(R.id.my_toolbar);
-        setSupportActionBar(barreO);
+        /*Toolbar barreO = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(barreO);*/
 
         //Création de l'image de départ dans une view de type: MonImage
-        final Bitmap bmp = BitmapFactory.decodeResource(getResources(),R.drawable.test);
+        Bitmap bmp = BitmapFactory.decodeResource(getResources(),R.drawable.test);
+       // Bitmap bmp = BitmapFactory.decodeResource(getResources(),R.drawable.test2);
+
+        Log.i("taille","" + bmp.getWidth() + "," + bmp.getHeight());
         _img = new MonImage(getBaseContext(),bmp);
         final int idImg = View.generateViewId();
         _img.setId(idImg);
@@ -123,27 +128,35 @@ public class MainActivity extends AppCompatActivity {
                 //test des nouvelles modification n'ayant pas encore de boutons attitrés
 
                 case TEST:
-                    float x = 3;
-                    float matrice[][] = new float[(int)x][(int)x];
-                    for(int i =0;i<x;i++)
-                    {
-                        for(int j = 0;j<x;j++)
-                        {
-                            matrice[i][j] = 1.0f/(x*x);
-                        }
-                    }
 
-                    matrice[0][0] = -1;
-                    matrice[0][1] = -1;
-                    matrice[0][2] = -1;
-                    matrice[1][0] = -1;
-                    matrice[1][1] = 8;
-                    matrice[1][2] = -1;
-                    matrice[2][0] = -1;
-                    matrice[2][1] = -1;
-                    matrice[2][2] = -1;
+
+                    float matrice[][] = MatriceGen.laplacien();
+
+
                     _img.set_bmp(ImageEdit.convolutionScr(_img.get_bmp(),matrice,getApplicationContext()));
+
                     break;
+
+
+                case CHG_TEINTE:
+
+                    _img.set_bmp(ImageEdit.changerTeinteScr(_img.get_bmp(),data.getIntExtra("teinte",1),getApplicationContext()));
+
+                    break;
+
+
+
+                case FILTRER_TEINTE:
+                    _img.set_bmp(ImageEdit.filtrerTeinte(_img.get_bmp(),data.getIntExtra("teinte2",1),data.getIntExtra("tolerance",1),getApplicationContext()));
+
+
+                    break;
+
+                case CHG_LUM:
+
+                    break;
+
+
             }
 
 
@@ -158,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
 
             opt.inScaled = false;
             opt.inMutable = true;
-            _img.set_bmpBase(BitmapFactory.decodeFile(_path,opt));
+            _img.set_bmpBase(ImageEdit.appercu(BitmapFactory.decodeFile(_path,opt),1500));
 
 
         }
@@ -444,11 +457,31 @@ public class MainActivity extends AppCompatActivity {
 
         //bouton bouton gallerie
 
+        bout = (ImageButton)findViewById(R.id.bout_gal);
+        bout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gallerie();
+            }
+        });
+
 
         //bouton sauvegarder
 
 
+        bout = (ImageButton) findViewById(R.id.bout_sauv);
+        bout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sauvegarder();
+            }
+        });
+
+
         //bouton quitter
+
+        /*bout = (ImageButton) findViewById(R.id.bout_quitter);
+        finish();*/
 
 
 
@@ -520,7 +553,12 @@ public class MainActivity extends AppCompatActivity {
     public static final int MODIF_IMG = 6;
     public static final int GALLERIE = 7;
 
+    public static final int FILTRER_TEINTE = 8;
+
     public static final int TEST = 9;
+
+
+    public static final int CHG_LUM = 11;
 
     public static final int MODIF_CONV = 10;
 }

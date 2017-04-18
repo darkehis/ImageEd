@@ -79,11 +79,11 @@
                 android:text="Extension Contraste" />
 
             <SeekBar
-                android:id="@+id/bar_ext_cont"
+                android:id="@+id/bar_chg_teinte"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:max="400"
-                android:progress="10" />
+                android:max="360"
+                android:progress="1" />
 
             <Button
                 android:id="@+id/bout_teinte"
@@ -91,11 +91,23 @@
                 android:layout_height="wrap_content"
                 android:text="Changer teinte" />
 
+            <SeekBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/bar_filtrer_teinte"
+                android:max="360" />
+
             <Button
                 android:id="@+id/button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Button" />
+
+            <SeekBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/bar_tolerance"
+                android:max="360"/>
 
             <Button
                 android:id="@+id/button4"
@@ -103,11 +115,23 @@
                 android:layout_height="wrap_content"
                 android:text="Button" />
 
+            <SeekBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/bar_lum_min"
+                android:max="100" />
+
             <Button
                 android:id="@+id/button5"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Button" />
+
+            <SeekBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/bar_lum_max"
+                android:max="100" />
         </LinearLayout>
     </ScrollView>
 

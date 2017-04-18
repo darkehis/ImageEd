@@ -20,7 +20,6 @@ rs_allocation img;
 
 void root(const uchar4* v_in,float4* v_out, uint32_t x, uint32_t y)
 {
-    total = 5;
     float4 coul = {0.0f,0.0f,0.0f,0.0f};
 
     if(x>centre && x <w_img-centre && y > centre && y < h_img-centre)
