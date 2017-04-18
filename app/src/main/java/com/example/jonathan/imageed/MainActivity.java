@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == MODIF_IMG && resultCode == RESULT_OK)
+        if((requestCode == MODIF_IMG || requestCode == MODIF_CONV) && resultCode == RESULT_OK)
         {
             int modif =  data.getIntExtra("modif",0);
             switch(modif)
@@ -153,6 +153,12 @@ public class MainActivity extends AppCompatActivity {
                     break;
 
                 case CHG_LUM:
+
+                    break;
+
+                case SOBEL:
+
+                    _img.set_bmp(ImageEdit.sobelSrc(_img.get_bmp(),getApplicationContext()));
 
                     break;
 
@@ -561,4 +567,5 @@ public class MainActivity extends AppCompatActivity {
     public static final int CHG_LUM = 11;
 
     public static final int MODIF_CONV = 10;
+    public static final int SOBEL = 12;
 }

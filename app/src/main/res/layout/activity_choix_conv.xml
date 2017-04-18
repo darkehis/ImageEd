@@ -1,29 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_choix_conv"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.jonathan.imageed.ChoixModif">
+
+    <Button
+        android:text="Confirmer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/bout_conf2"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="false"
+        android:layout_marginTop="50dp" />
+
+    <Button
+        android:text="Annuler"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/bout_annuler2"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/bout_conf2" />
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="193dp">
+        android:layout_height="190dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/frameLayout2"
+        android:layout_toLeftOf="@+id/bout_conf2">
 
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:srcCompat="@android:color/black"
+            android:id="@+id/img_appercu2" />
     </FrameLayout>
 
-    <Button
-        android:id="@+id/button1"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Convolution 1" />
+        android:layout_height="match_parent"
+        android:layout_below="@+id/frameLayout2"
+        android:layout_alignParentStart="true">
 
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Convolution 2" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
 
-    <Button
-        android:id="@+id/button3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Convolution 3" />
-</LinearLayout>
+            <Button
+                android:id="@+id/bout_sobel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sobel" />
+
+            <Button
+                android:id="@+id/bout_laplacien"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Laplacien" />
+
+
+
+            <SeekBar
+                android:id="@+id/bar_gaussien"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="49"
+                android:progress="2" />
+
+
+            <SeekBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/bar_moyennant"
+                android:max="49"
+                android:progress="2"/>
+
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

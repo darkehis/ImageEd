@@ -21,55 +21,73 @@ public class ChoixConv extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-
-
-
-
-
         setContentView(R.layout.activity_choix_conv);
 
-        Button bout1 = (Button) findViewById(R.id.button1);
-        bout1.setOnClickListener(new View.OnClickListener() {
+
+        final Intent intent = getIntent();
+
+        _appercu = intent.getParcelableExtra("appercu");
+        _curAppercu = _appercu.copy(_appercu.getConfig(),true);
+
+        final ImageView img =  (ImageView)findViewById(R.id.img_appercu2);
+        img.setScaleType(ImageView.ScaleType.CENTER);
+
+        img.setImageBitmap(_curAppercu);
+
+        Button bout = (Button) findViewById(R.id.bout_sobel);
+        bout.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
 
-                Intent resultat =  new Intent();
-                resultat.putExtra("modif",MainActivity.TEST);
+                        _curAppercu = ImageEdit.sobelSrc(_appercu,getApplicationContext());
+                        img.setImageBitmap(_curAppercu);
+                        _curModif = MainActivity.SOBEL;
+
+
+            }
+
+        });
+
+        bout = (Button) findViewById(R.id.bout_laplacien);
+        bout.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+
+
+
+
+            }
+
+        });
+
+        bout = (Button) findViewById(R.id.bout_annuler2);
+
+        bout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                img.setImageBitmap(_appercu);
+            }
+        });
+
+
+        bout = (Button)findViewById(R.id.bout_conf2);
+
+        bout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent resultat = new Intent();
+                resultat.putExtra("modif",_curModif);
                 setResult(RESULT_OK,resultat);
                 finish();
-
-
-
-
             }
-
         });
 
-        Button bout2 = (Button) findViewById(R.id.button2);
-        bout2.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View v) {
-
-
-
-
-            }
-
-        });
-
-
-        Button bout3 = (Button) findViewById(R.id.button3);
-        bout3.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View v) {
-
-
-
-
-            }
-
-        });
 
     }
 
+
+
+    protected Bitmap _appercu;
+    protected Bitmap _curAppercu;
+    protected int _curModif;
 }
