@@ -568,4 +568,5 @@ public class MainActivity extends AppCompatActivity {
 
     public static final int MODIF_CONV = 10;
     public static final int SOBEL = 12;
+    public static final int LAPLACIEN = 13;
 }
