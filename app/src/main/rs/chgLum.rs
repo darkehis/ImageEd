@@ -60,7 +60,7 @@ void root(const uchar4* in,uchar4* out,uint32_t x,uint32_t y)
     }
 
 
-    float nV = fmax(fmin(v,maxL),minL);
+    s = fmax(fmin(s,maxL),minL);
 
 
 
@@ -69,9 +69,9 @@ void root(const uchar4* in,uchar4* out,uint32_t x,uint32_t y)
     int hE = floor(hh);
     float hD = hh- hE;
 
-    float p = nV*(1.0-s);
-    float q = nV*(1.0-s*hD);
-    float t = nV*(1.0- s*(1-hD));
+    float p = v*(1.0-s);
+    float q = v*(1.0-s*hD);
+    float t = v*(1.0- s*(1-hD));
 
     switch(hE)
     {
@@ -122,3 +122,23 @@ void root(const uchar4* in,uchar4* out,uint32_t x,uint32_t y)
     *out = rsPackColorTo8888(nouvCoul);
 
 }
+
+
+void root2(const uchar4* in,uchar4* out,uint32_t x,uint32_t y)
+{
+
+    float4 coul = {0.0f,0.0f,0.0f,0.0f};
+    coul = rsUnpackColor8888(*in);
+    float4 min4 = {minL,minL,minL,0.0f};
+    float4 max4 = {maxL,maxL,maxL,1.0f};
+
+    coul = fmax(fmin(coul,max4),min4);
+
+    *out = rsPackColorTo8888(coul);
+
+
+
+}
+
+
+

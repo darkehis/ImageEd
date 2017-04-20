@@ -40,7 +40,7 @@ public class MonImage extends ImageView {
 
         //initialisation variables
         setScaleType(ScaleType.CENTER);
-        _bmpBase = ImageEdit.appercu(bmp,1500); //le bitmap de base:
+        _bmpBase = ImageEdit.apercu(bmp,1500); //le bitmap de base:
 
         //creation du tableau de bitmap à retenir pour pouvoir annuler les modifications
 
@@ -483,9 +483,9 @@ public class MonImage extends ImageView {
      *
      * @return Un appercu du bitmap pour pouvoir prévisualiser les modifications
      */
-    public Bitmap appercu(int tailleM)
+    public Bitmap apercu(int tailleM)
     {
-        return ImageEdit.appercu(_bmp[_numCurBmp],tailleM);
+        return ImageEdit.apercu(_bmp[_numCurBmp],tailleM);
 
 
     }
@@ -574,7 +574,7 @@ public class MonImage extends ImageView {
     }
 
     public void set_bmp(Bitmap bmp) {
-        Bitmap bmp2 = ImageEdit.appercu(bmp,1500);
+        Bitmap bmp2 = ImageEdit.apercu(bmp,1500);
         if(_numCurBmp == _nbBmp-1)
         {
             for(int i = 0;i<_numCurBmp;i++)

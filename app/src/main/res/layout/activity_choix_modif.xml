@@ -40,7 +40,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:srcCompat="@android:color/black"
-            android:id="@+id/img_appercu" />
+            android:id="@+id/img_apercu" />
     </FrameLayout>
 
     <ScrollView
@@ -61,6 +61,35 @@
                 android:text="Griser"
                 android:layout_marginTop="13dp" />
 
+            <TextView
+                android:id="@+id/textContr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TextView" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <SeekBar
+                    android:id="@+id/bar_contr1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:max="100"
+                    android:progress="0" />
+
+                <SeekBar
+                    android:id="@+id/bar_contr2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:max="100"
+                    android:progress="1" />
+
+            </LinearLayout>
+
             <Button
                 android:id="@+id/bout_ega"
                 android:layout_width="match_parent"
@@ -72,7 +101,7 @@
                 android:id="@+id/textSeuil"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Seuil : 0/50"
+                android:text="Seuil : 0/1"
                 android:gravity="center_horizontal"
                 android:textColor="#000000"
                 android:textSize="19dp" />
@@ -81,8 +110,8 @@
                 android:id="@+id/bar_seuil"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:max="30"
-                android:progress="1"
+                android:max="20"
+                android:progress="0"
                 android:layout_marginBottom="18dp"/>
 
             <LinearLayout
@@ -145,7 +174,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:max="360"
-                android:progress="1"
+                android:progress="0"
                 android:layout_marginBottom="18dp"/>
 
             <LinearLayout
@@ -214,14 +243,16 @@
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"
                     android:layout_weight="1"
-                    android:max="100" />
+                    android:max="100"
+                    android:progress="0"/>
 
                 <SeekBar
                     android:id="@+id/bar_lum_max"
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"
                     android:layout_weight="1"
-                    android:max="100" />
+                    android:max="100"
+                    android:progress="100"/>
             </LinearLayout>
 
         </LinearLayout>

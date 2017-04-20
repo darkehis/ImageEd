@@ -125,7 +125,6 @@ public class ImageEdit {
     public static Bitmap zoomScr(Bitmap bmpPrec,Bitmap bmpOri, int w, int h, Rect inter ,Context context)
     {
 
-        Log.i("rectangle","on zoom vindieu");
         //Déclaration du bitmap résultat
         Bitmap bmp2 = Bitmap.createBitmap(w,h,bmpOri.getConfig());
 
@@ -148,9 +147,6 @@ public class ImageEdit {
 
 
         Allocation origine = Allocation.createFromBitmap(RS,bmpOri, Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
-
-
-        Log.i("zoom",""+ zoom);
 
         //affectation des differents paramètres du script
         script.set_origin(origine);
@@ -352,6 +348,70 @@ public class ImageEdit {
     }
 
 
+
+
+    public static Bitmap extensionLineaireScr(Bitmap bmp, float min,float max, Context context)
+    {
+
+        Bitmap bmp2 = bmp.copy(bmp.getConfig(),true);
+
+        bmp2 = griserScr(bmp2,context);
+
+
+        //Classe d'acces à la couche renderscript.
+        RenderScript RS = RenderScript.create(context);
+
+        //Creéation du cript.
+        ScriptC_HSV_RGB script = new ScriptC_HSV_RGB(RS);
+
+
+        //Allocation correspondante au bitmap de départ.
+        Allocation allocIn = Allocation.createFromBitmap(RS, bmp2, Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
+
+
+        //Allocation intermédiaire au cas ou il faille changer l'intervalle des différents coefficients.
+        Allocation allocInter = Allocation.createTyped(RS, Type.createXY(RS,Element.F32_4(RS),bmp2.getWidth(),bmp2.getHeight()));
+
+
+        //Allocation correspondante au bitmap resultat
+        Allocation allocOut = Allocation.createTyped(RS, allocIn.getType());
+
+
+        script.forEach_toHSV(allocIn,allocInter);
+
+
+        ScriptC_intervalle scriptInter = new ScriptC_intervalle(RS);
+
+        scriptInter.set_minN(min);
+        scriptInter.set_maxN(max);
+        scriptInter.forEach_calculerMinMax2(allocInter,allocInter);
+        scriptInter.forEach_inter2(allocInter,allocInter);
+
+        script.forEach_toRGB(allocInter,allocOut);
+
+        //scriptInter.forEach_toBmp(allocInter,allocOut);
+
+
+
+
+
+
+
+
+
+        allocOut.copyTo(bmp2);
+
+        script.destroy();
+        scriptInter.destroy();
+        RS.finish();
+
+        return bmp2;
+
+
+
+    }
+
+
     /**
      * Fonction d'égalisation de l'histogramme du bitmap à modifier
      *
@@ -460,26 +520,18 @@ public class ImageEdit {
         //taille de la matrice
         int dim = matrix1.length;
 
-        float matrix1D1[] = new float[dim*dim];
+        float[] matrix1D1 = MatriceGen.lineariser(matrix1);
 
-        for(int i =0;i<dim;i++)
+        for(int i =0;i<9;i++)
         {
-            for(int j =0;j<dim;j++)
-            {
-                matrix1D1[(i*dim)+j] = matrix1[i][j];
-            }
+            Log.i("sobel","" + matrix1D1[i]);
+
         }
 
-        float[][] matrix2 = MatriceGen.sobel1();
-        float matrix1D2[] = new float[dim*dim];
 
-        for(int i =0;i<dim;i++)
-        {
-            for(int j =0;j<dim;j++)
-            {
-                matrix1D2[(i*dim)+j] = matrix2[i][j];
-            }
-        }
+        float[] matrix1D2 = MatriceGen.lineariser(MatriceGen.sobel2());
+
+
 
 
         //nb de coeff de la matrice.
@@ -513,7 +565,7 @@ public class ImageEdit {
         matAll.copy1DRangeFrom(0,taille,matrix1D1);
 
         //variables dont on a besoin pour faire tourner le script.
-        Allocation img = Allocation.createFromBitmap(RS,bmp, Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
+        Allocation img = Allocation.createFromBitmap(RS,bmp2, Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
 
         script.set_matrice2(matAll);
 
@@ -549,9 +601,10 @@ public class ImageEdit {
 
         if(total == -1)
         {
+            Log.i("sobel","ok1");
             scriptInter.set_initialise(0);
-            scriptInter.forEach_calculerMinMax(allocInter3,allocInter3);
-            scriptInter.forEach_root(allocInter3,allocInter3);
+            scriptInter.forEach_calculerMinMax0(allocInter3,allocInter3);
+            scriptInter.forEach_interNo(allocInter3,allocInter3);
 
         }
 
@@ -666,30 +719,27 @@ public class ImageEdit {
 
         //taille de la matrice
         int dim = matrix.length;
+
         //nb de coeff de la matrice.
         int taille = dim*dim;
+
+
         //coordonnées du coeficient centrale de la matrice.
         int centre = dim/2;
 
         //calcul de la somme des coeffiecients, renvoie -1 si un coeff est négatif
         float total = calculTotal(matrix);
 
-
+        Log.i("convol","" + total);
         //Transformation de la matrice en tableau de 1 dimension.
         //et normalisation si possible
-        float matrix1D[] = new float[dim*dim];
-
-        for(int i =0;i<dim;i++)
+        if(total != -1)
         {
-            for(int j =0;j<dim;j++)
-            {
-                matrix1D[(i*dim)+j] = matrix[i][j];
-                if(total != -1)
-                {
-                    matrix[i][j] = matrix[i][j]/total;
-                }
-            }
+            matrix = MatriceGen.normaliser(matrix);
         }
+
+        float matrix1D[] = MatriceGen.lineariser(matrix);
+
 
 
 
@@ -754,8 +804,8 @@ public class ImageEdit {
         if(total == -1)
         {
             scriptInter.set_initialise(0);
-            scriptInter.forEach_calculerMinMax(allocInter,allocInter);
-            scriptInter.forEach_root(allocInter,allocInter);
+            scriptInter.forEach_calculerMinMax2(allocInter,allocInter);
+            scriptInter.forEach_interNo2(allocInter,allocInter);
 
         }
 
@@ -808,8 +858,6 @@ public class ImageEdit {
 
 
     }
-
-
 
     public static Bitmap filtrerTeinte(Bitmap bmp, int teinte, int tolerance,Context context)
     {
@@ -1039,10 +1087,10 @@ public class ImageEdit {
 
 
 
-    public static Bitmap appercu(Bitmap bmp,int tailleM)
+    public static Bitmap apercu(Bitmap bmp,int tailleM)
     {
         int maxDim,fact,nW,nH;
-        //l'appercu fera au plus tailleM px de long/large;
+        //l'apercu fera au plus tailleM px de long/large;
         if(bmp.getHeight()<tailleM && bmp.getWidth()<tailleM)
         {
             return bmp;

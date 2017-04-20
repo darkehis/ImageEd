@@ -32,24 +32,24 @@ public class ChoixModif extends Activity {
 
 
         //initialisation
-        _teinte = 1;
+        /*_teinte = 1;
         _tolerance = 1;
         _teinte2 = 1;
         _minLum = 1;
-        _maxLum = 100;
+        _maxLum = 100;*/
 
         //Assignation de la layout à l'activité.
         setContentView(R.layout.activity_choix_modif);
         final Intent intent = getIntent();
 
-        _appercu = intent.getParcelableExtra("appercu");
-        _curAppercu = _appercu.copy(_appercu.getConfig(),true);
+        _apercu = intent.getParcelableExtra("apercu");
+        _curApercu = _apercu.copy(_apercu.getConfig(),true);
 
 
-        final ImageView img =  (ImageView)findViewById(R.id.img_appercu);
+        final ImageView img =  (ImageView)findViewById(R.id.img_apercu);
         img.setScaleType(ImageView.ScaleType.CENTER);
 
-        img.setImageBitmap(_curAppercu);
+        img.setImageBitmap(_curApercu);
 
 
         //Assignation Boutons
@@ -58,8 +58,8 @@ public class ChoixModif extends Activity {
         bout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                _curAppercu = ImageEdit.griserScr(_appercu,getApplicationContext());
-                img.setImageBitmap(_curAppercu);
+                _curApercu = ImageEdit.griserScr(_apercu,getApplicationContext());
+                img.setImageBitmap(_curApercu);
                 _curModif = MainActivity.GRISER;
 
             }
@@ -71,11 +71,12 @@ public class ChoixModif extends Activity {
         bout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                _curAppercu = ImageEdit.egaliserSrc(_appercu,getApplicationContext());
-                img.setImageBitmap(_curAppercu);
+                _curApercu = ImageEdit.egaliserSrc(_apercu,getApplicationContext());
+                img.setImageBitmap(_curApercu);
                 _curModif = MainActivity.EGALISER;
             }
         });
+
 
 
 
@@ -89,8 +90,8 @@ public class ChoixModif extends Activity {
                 {
                     _curModif = MainActivity.CHG_TEINTE;
                     _teinte = progress;
-                    _curAppercu = ImageEdit.changerTeinteScr(_appercu,_teinte,getApplicationContext());
-                    img.setImageBitmap(_curAppercu);
+                    _curApercu = ImageEdit.changerTeinteScr(_apercu,_teinte,getApplicationContext());
+                    img.setImageBitmap(_curApercu);
                     float[] coul = new float[3];
                     coul[0] = _teinte-1;
                     coul[1] = 1;
@@ -113,6 +114,76 @@ public class ChoixModif extends Activity {
             }
         });
 
+        final TextView textView10 = (TextView) findViewById(R.id.textContr);
+
+        bar = (SeekBar)findViewById(R.id.bar_contr1);
+
+        bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+                if (fromUser) {
+                    _minCont = (float) progress/100;
+                    SeekBar bar2 = (SeekBar)findViewById(R.id.bar_contr2);
+                    bar2.setProgress(Math.max(progress,bar2.getProgress()));
+                    _maxCont = bar2.getProgress();
+
+                    _curApercu = ImageEdit.extensionLineaireScr(_apercu,_minCont,_maxCont,getApplicationContext());
+
+                    textView10.setText("Contraste : " + _minCont + "/" + _maxCont);
+                    img.setImageBitmap(_curApercu);
+
+                }
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar)
+            {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        bar = (SeekBar)findViewById(R.id.bar_contr2);
+
+        bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+                if (fromUser) {
+                    _maxCont = (float) progress/100;
+                    SeekBar bar2 = (SeekBar)findViewById(R.id.bar_contr1);
+                    bar2.setProgress(Math.min(progress,bar2.getProgress()));
+                    _minCont = bar2.getProgress();
+
+                    _curApercu = ImageEdit.extensionLineaireScr(_apercu,_minCont,_maxCont,getApplicationContext());
+
+                    textView10.setText("Contraste : " + _minCont + "/" + _maxCont);
+                    img.setImageBitmap(_curApercu);
+
+                }
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar)
+            {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
         final TextView textView = (TextView) findViewById(R.id.textSeuil);
 
 
@@ -123,13 +194,13 @@ public class ChoixModif extends Activity {
 
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
-                float progressValue = (float) progress/10;
+                float progressValue = (float) progress/20;
                 if (fromUser) {
                     _curModif = MainActivity.SEUIL;
                     _seuil = progressValue;
-                    _curAppercu = ImageEdit.seuilScr(_appercu,_seuil, getApplicationContext());
-                    textView.setText("Seuil : " + _seuil + "/" + seekBar.getMax()/10);
-                    img.setImageBitmap(_curAppercu);
+                    _curApercu = ImageEdit.seuilScr(_apercu,_seuil, getApplicationContext());
+                    textView.setText("Seuil : " + _seuil + "/1" );
+                    img.setImageBitmap(_curApercu);
 
                 }
 
@@ -156,9 +227,9 @@ public class ChoixModif extends Activity {
                 if (fromUser) {
                     _curModif = MainActivity.FILTRER_TEINTE;
                     _teinte2 = progress;
-                    _curAppercu = ImageEdit.filtrerTeinte(_appercu, _teinte2, _tolerance, getApplicationContext());
+                    _curApercu = ImageEdit.filtrerTeinte(_apercu, _teinte2, _tolerance, getApplicationContext());
 
-                    img.setImageBitmap(_curAppercu);
+                    img.setImageBitmap(_curApercu);
 
                     float[] coul = new float[3];
                     coul[0] = _teinte2-1;
@@ -194,13 +265,13 @@ public class ChoixModif extends Activity {
                 if (fromUser) {
                     _curModif = MainActivity.FILTRER_TEINTE;
                     _tolerance = progress;
-                    _curAppercu = ImageEdit.filtrerTeinte(_appercu, _teinte2, _tolerance, getApplicationContext());
+                    _curApercu = ImageEdit.filtrerTeinte(_apercu, _teinte2, _tolerance, getApplicationContext());
                     textView3.setText("Tolérance : " + _tolerance + "/" + seekBar.getMax());
                     if (_tolerance <= 1) {
                         textView4.setText("Filtrer " + _tolerance + " teinte");
                     }
                     else textView4.setText("Filtrer " + _tolerance + " teintes");
-                    img.setImageBitmap(_curAppercu);
+                    img.setImageBitmap(_curApercu);
 
 
                 }
@@ -231,9 +302,9 @@ public class ChoixModif extends Activity {
                 bar2.setProgress(Math.max(_minLum,bar2.getProgress()));
                 _maxLum = bar2.getProgress();
 
-                _curAppercu = ImageEdit.chgLum(_appercu,(float)(_minLum)/100.f,(float)(_maxLum)/100.f,getApplicationContext());
+                _curApercu = ImageEdit.chgLum(_apercu,(float)(_minLum)/100.f,(float)(_maxLum)/100.f,getApplicationContext());
                 textView2.setText("Luminosité : " + _minLum + "/" + _maxLum);
-                img.setImageBitmap(_curAppercu);
+                img.setImageBitmap(_curApercu);
 
             }
 
@@ -262,10 +333,10 @@ public class ChoixModif extends Activity {
                 bar2.setProgress(Math.min(_maxLum,bar2.getProgress()));
                 _minLum = bar2.getProgress();
 
-                _curAppercu = ImageEdit.chgLum(_appercu,(float)(_minLum)/100.f,(float)(_maxLum)/100.f,getApplicationContext());
+                _curApercu = ImageEdit.chgLum(_apercu,(float)(_minLum)/100.f,(float)(_maxLum)/100.f,getApplicationContext());
 
                 textView2.setText("Luminosité : " + _minLum + "/" + _maxLum);
-                img.setImageBitmap(_curAppercu);
+                img.setImageBitmap(_curApercu);
 
             }
 
@@ -285,7 +356,27 @@ public class ChoixModif extends Activity {
         bout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                img.setImageBitmap(_appercu);
+                SeekBar bar2 = (SeekBar)findViewById(R.id.bar_seuil);
+                bar2.setProgress(0);
+                textView.setText("Seuil : 0/1" );
+                bar2 = (SeekBar)findViewById(R.id.bar_sat1);
+                bar2.setProgress(0);
+                bar2 = (SeekBar)findViewById(R.id.bar_sat2);
+                bar2.setProgress(0);
+                bar2 = (SeekBar)findViewById(R.id.bar_chg_teinte);
+                bar2.setProgress(0);
+                bar2 = (SeekBar)findViewById(R.id.bar_filtrer_teinte);
+                bar2.setProgress(0);
+                textView4.setText("Filtrer 0 teinte" );
+                bar2 = (SeekBar)findViewById(R.id.bar_tolerance);
+                bar2.setProgress(0);
+                textView3.setText("Tolérance : 0/360" );
+                bar2 = (SeekBar)findViewById(R.id.bar_lum_min);
+                bar2.setProgress(0);
+                bar2 = (SeekBar)findViewById(R.id.bar_lum_max);
+                bar2.setProgress(100);
+                textView2.setText("Luminosité : 0/100" );
+                img.setImageBitmap(_apercu);
             }
         });
 
@@ -309,10 +400,11 @@ public class ChoixModif extends Activity {
 
     }
 
-
+    protected float _minCont;
+    protected float _maxCont;
     protected float _seuil;
-    protected Bitmap _appercu;
-    protected Bitmap _curAppercu;
+    protected Bitmap _apercu;
+    protected Bitmap _curApercu;
     protected int _teinte;
     protected int _teinte2;
     protected int _minLum;

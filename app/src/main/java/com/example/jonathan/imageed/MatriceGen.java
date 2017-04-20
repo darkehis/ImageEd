@@ -71,26 +71,44 @@ public class MatriceGen {
             }
         }
 
-        return normalise(mat);
+        return normaliser(mat);
     }
 
     public static float[][] gaussien(int taille,float sigma)
     {
         float[][] mat = new float[taille][taille];
+        int centre = (int)(taille/2);
+        int x,y;
         for(int i =0;i<taille;i++)
         {
             for(int j = 0;j<taille;j++)
             {
-                mat[i][j] = (float)((1/((2*Math.PI*sigma*sigma)))*Math.exp((-1)*(i*i+j*j)/(2*sigma*sigma)));
+                x = i-centre;
+                y = j-centre;
+                mat[i][j] = (1/(float)(Math.PI*sigma*sigma))*(float)Math.exp((-1)*(x*x+y*y)/(2*sigma*sigma));
             }
         }
 
-        return normalise(mat);
+        return normaliser(mat);
 
     }
 
+    protected static float[] lineariser(float[][] mat)
+    {
+        float[] mat2 = new float[mat.length*mat.length];
+        for(int i =0;i<mat.length;i++)
+        {
+            for(int j =0;j<mat.length;j++)
+            {
+                mat2[j*mat.length + i] = mat[i][j];
+            }
+        }
 
-    protected static float[][] normalise(float[][] mat)
+        return mat2;
+
+    }
+
+    protected static float[][] normaliser(float[][] mat)
     {
         float total = 0;
         for(int i =0;i<mat.length;i++)

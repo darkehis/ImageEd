@@ -40,7 +40,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:srcCompat="@android:color/black"
-            android:id="@+id/img_appercu2" />
+            android:id="@+id/img_apercu2" />
     </FrameLayout>
 
     <ScrollView
@@ -105,7 +105,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:max="25"
+                    android:max="19"
                     android:progress="1" />
 
                 <SeekBar
@@ -132,7 +132,7 @@
                 android:id="@+id/bar_moyenne"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:max="25"
+                android:max="19"
                 android:progress="1"/>
 
 

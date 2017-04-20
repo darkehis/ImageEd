@@ -122,18 +122,9 @@ public class MainActivity extends AppCompatActivity {
                     _img.set_bmp(ImageEdit.diminutionContraste(_img.get_bmp()));
                     break;
                 //étendre dynamiquement le contratste de l'image.
-                case EXT_DYN_CONTRASTE:
-                    _img.set_bmp(ImageEdit.extensionContraste(_img.get_bmp()));
-                    break;
-                //test des nouvelles modification n'ayant pas encore de boutons attitrés
+                case EXT_DYN:
 
-                case TEST:
-
-
-                    float matrice[][] = MatriceGen.laplacien();
-
-
-                    _img.set_bmp(ImageEdit.convolutionScr(_img.get_bmp(),matrice,getApplicationContext()));
+                    _img.set_bmp(ImageEdit.extensionLineaireScr(_img.get_bmp(),0.0f,1.0f,getApplicationContext()));
 
                     break;
 
@@ -197,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
 
             opt.inScaled = false;
             opt.inMutable = true;
-            _img.set_bmpBase(ImageEdit.appercu(BitmapFactory.decodeFile(_path,opt),1500));
+            _img.set_bmpBase(ImageEdit.apercu(BitmapFactory.decodeFile(_path,opt),1500));
 
 
         }
@@ -421,7 +412,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 Intent intent = new Intent(getApplicationContext(),ChoixModif.class);
-                intent.putExtra("appercu",_img.appercu(300));
+                intent.putExtra("apercu",_img.apercu(300));
                 startActivityForResult(intent,MODIF_IMG);
 
             }
@@ -436,7 +427,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(),ChoixConv.class);
-                intent.putExtra("appercu",_img.appercu(300));
+                intent.putExtra("apercu",_img.apercu(300));
                 startActivityForResult(intent,MODIF_CONV);
             }
         });
@@ -527,7 +518,7 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.filtres:
                 intent = new Intent(getBaseContext(),ChoixModif.class);
-                intent.putExtra("appercu",_img.appercu(300));
+                intent.putExtra("apercu",_img.apercu(300));
                 startActivityForResult(intent,MODIF_IMG);
                 return true;
 
@@ -573,15 +564,13 @@ public class MainActivity extends AppCompatActivity {
     public static final int EGALISER = 1;
     public static final int CHG_TEINTE = 2;
     public static final int DIM_CONTRASTE = 3;
-    public static final int EXT_DYN_CONTRASTE = 4;
+    public static final int EXT_DYN = 4;
     public static final int PRENDRE_PHOTO = 5;
 
     public static final int MODIF_IMG = 6;
     public static final int GALLERIE = 7;
 
     public static final int FILTRER_TEINTE = 8;
-
-    public static final int TEST = 9;
 
 
     public static final int CHG_LUM = 11;
