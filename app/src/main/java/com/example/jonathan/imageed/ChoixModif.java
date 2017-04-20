@@ -271,7 +271,7 @@ public class ChoixModif extends Activity {
                     _curModif = MainActivity.SEUIL;
                     _seuil = progressValue;
                     _curApercu = ImageEdit.seuilScr(_apercu,_seuil, getApplicationContext());
-                    textView.setText("Seuil : " + _seuil + "/1" );
+                    textView.setText("Seuil : " + _seuil + "/1.0" );
                     img.setImageBitmap(_curApercu);
 
                 }
@@ -407,7 +407,7 @@ public class ChoixModif extends Activity {
 
                 _curApercu = ImageEdit.chgLum(_apercu,(float)(_minLum)/100.f,(float)(_maxLum)/100.f,getApplicationContext());
 
-                textView2.setText("Luminosité : " + _minLum + "/" + _maxLum);
+                textView2.setText("Luminance : " + _minLum + "/" + _maxLum);
                 img.setImageBitmap(_curApercu);
 
             }
@@ -430,7 +430,12 @@ public class ChoixModif extends Activity {
             public void onClick(View v) {
                 SeekBar bar2 = (SeekBar)findViewById(R.id.bar_seuil);
                 bar2.setProgress(0);
-                textView.setText("Seuil : 0/1" );
+                textView.setText("Seuil : 0.0/1.0" );
+                bar2 = (SeekBar)findViewById(R.id.bar_contr1);
+                bar2.setProgress(0);
+                bar2 = (SeekBar)findViewById(R.id.bar_contr2);
+                bar2.setProgress(100);
+                textView.setText("Contraste : 0.0/1.0" );
                 bar2 = (SeekBar)findViewById(R.id.bar_sat1);
                 bar2.setProgress(0);
                 bar2 = (SeekBar)findViewById(R.id.bar_sat2);
@@ -447,7 +452,7 @@ public class ChoixModif extends Activity {
                 bar2.setProgress(0);
                 bar2 = (SeekBar)findViewById(R.id.bar_lum_max);
                 bar2.setProgress(100);
-                textView2.setText("Luminosité : 0/100" );
+                textView2.setText("Luminance : 0/100" );
                 img.setImageBitmap(_apercu);
             }
         });
