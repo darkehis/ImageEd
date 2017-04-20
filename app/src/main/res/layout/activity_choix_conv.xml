@@ -89,7 +89,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center_horizontal"
-                    android:text="Sigma 0/5"
+                    android:text="Sigma 0.0/5.0"
                     android:textColor="#000000"
                     android:textSize="19dp" />
             </LinearLayout>

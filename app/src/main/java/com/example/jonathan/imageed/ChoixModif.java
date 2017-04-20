@@ -123,18 +123,18 @@ public class ChoixModif extends Activity {
 
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
-                if (fromUser) {
+
                     _minCont = (float) progress/100;
                     SeekBar bar2 = (SeekBar)findViewById(R.id.bar_contr2);
                     bar2.setProgress(Math.max(progress,bar2.getProgress()));
-                    _maxCont = bar2.getProgress();
+                    _maxCont = (float) bar2.getProgress()/100;
 
                     _curApercu = ImageEdit.extensionLineaireScr(_apercu,_minCont,_maxCont,getApplicationContext());
 
                     textView10.setText("Contraste : " + _minCont + "/" + _maxCont);
                     img.setImageBitmap(_curApercu);
 
-                }
+
 
             }
 
@@ -157,18 +157,90 @@ public class ChoixModif extends Activity {
 
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
-                if (fromUser) {
+
                     _maxCont = (float) progress/100;
                     SeekBar bar2 = (SeekBar)findViewById(R.id.bar_contr1);
                     bar2.setProgress(Math.min(progress,bar2.getProgress()));
-                    _minCont = bar2.getProgress();
+                    _minCont = (float) bar2.getProgress()/100;
 
                     _curApercu = ImageEdit.extensionLineaireScr(_apercu,_minCont,_maxCont,getApplicationContext());
 
                     textView10.setText("Contraste : " + _minCont + "/" + _maxCont);
                     img.setImageBitmap(_curApercu);
 
-                }
+
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar)
+            {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        final TextView textView11 = (TextView) findViewById(R.id.textSat1);
+
+        bar = (SeekBar)findViewById(R.id.bar_sat1);
+
+        bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+
+                _maxCont = (float) progress/100;
+                SeekBar bar2 = (SeekBar)findViewById(R.id.bar_contr1);
+                bar2.setProgress(Math.min(progress,bar2.getProgress()));
+                _minCont = (float) bar2.getProgress()/100;
+
+                _curApercu = ImageEdit.extensionLineaireScr(_apercu,_minCont,_maxCont,getApplicationContext());
+
+                textView10.setText("Contraste : " + _minCont + "/" + _maxCont);
+                img.setImageBitmap(_curApercu);
+
+
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar)
+            {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        final TextView textView12 = (TextView) findViewById(R.id.textSat2);
+
+        bar = (SeekBar)findViewById(R.id.bar_sat2);
+
+        bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+
+                _maxCont = (float) progress/100;
+                SeekBar bar2 = (SeekBar)findViewById(R.id.bar_contr1);
+                bar2.setProgress(Math.min(progress,bar2.getProgress()));
+                _minCont = (float) bar2.getProgress()/100;
+
+                _curApercu = ImageEdit.extensionLineaireScr(_apercu,_minCont,_maxCont,getApplicationContext());
+
+                textView10.setText("Contraste : " + _minCont + "/" + _maxCont);
+                img.setImageBitmap(_curApercu);
+
+
 
             }
 
