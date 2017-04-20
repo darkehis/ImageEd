@@ -22,7 +22,7 @@ import java.security.AccessController;
 import static android.graphics.Bitmap.createBitmap;
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 import static android.renderscript.Allocation.createSized;
-import static com.example.jonathan.imageed.R.drawable.test;
+//import static com.example.jonathan.imageed.R.drawable.test;
 
 /**
  * Created by Jonathan on 20/01/2017.
@@ -44,6 +44,8 @@ public class ImageEdit {
      * @return
      */
 
+    //useless
+    /*
     public static Bitmap griser(Bitmap bmp)
     {
         int coul,r,g,b,gr;
@@ -65,7 +67,7 @@ public class ImageEdit {
 
         return bmp2;
 
-    }
+    }*/
 
     /**  Fonction faisant appel à un renderscript pour le grisage du bitmap source.
      *
@@ -99,7 +101,7 @@ public class ImageEdit {
         script.forEach_root(allocIn,allocOut);
 
 
-
+        //copie de l'allocation dans le bitmap résultat
         allocOut.copyTo(bmp2);
 
         script.destroy();
@@ -174,11 +176,201 @@ public class ImageEdit {
 
     }
 
+    /**
+     * Fonction qui fait une extension linéaire de la saturation de l'image entre min max
+     *
+     *
+     * @param bmp le bitmap à modifier
+     * @param min la saturation min
+     * @param max la saturation max
+     * @param context le context de l'application
+     * @return Bitmap avec une saturation entre min et max
+     */
 
 
-    //devenu useless
+
+    public static Bitmap saturationSrc(Bitmap bmp, float min,float max,Context context)
+    {
+        //Le nouveau bitmap: le result
+        Bitmap bmp2 = bmp.copy(bmp.getConfig(),true);
 
 
+        //création de l'acces  au contexte renderscript.
+        RenderScript RS = RenderScript.create(context);
+
+        //l'allocation du bitmap à modifier
+        Allocation allocIn;
+        allocIn = Allocation.createFromBitmap(RS, bmp, Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
+
+
+        //l'allocation du bitmap resultat.
+        Allocation allocOut = Allocation.createTyped(RS, allocIn.getType());
+
+        //Allocation intermédiaire pour le travail sur des float entre 0 et
+        Allocation allocInter = Allocation.createTyped(RS, Type.createXY(RS,Element.F32_4(RS),bmp2.getWidth(),bmp2.getHeight()));
+
+        //L'objet du script de grisage.
+        ScriptC_HSV_RGB script = new ScriptC_HSV_RGB(RS);
+
+        ScriptC_intervalle scriptInter = new ScriptC_intervalle(RS);
+
+
+
+        //passage en HSV
+        script.forEach_toHSV(allocIn,allocInter);
+
+        //initialisaation du min et du max dans le script
+        scriptInter.set_maxN(max);
+        scriptInter.set_minN(min);
+
+        //calcul du min et du max de la saturation pour le bitmap d'origine
+        scriptInter.forEach_calculerMinMax1(allocInter,allocInter);
+
+
+        //calcul de la nouvelle saturation
+        scriptInter.forEach_inter1(allocInter,allocInter);
+
+
+
+
+
+        //repassage en RGB
+        script.forEach_toRGB(allocInter,allocOut);
+
+
+
+
+
+        allocOut.copyTo(bmp2);
+
+        script.destroy();
+        scriptInter.destroy();
+        RS.finish();
+
+        return bmp2;
+
+
+
+
+    }
+
+    /**Fonction qui modifie la luminosité de l'image (ajout d'un même complement à chaque composante de l'image
+     *
+     * @param bmp Le bitmap à modifier
+     * @param comp Le complement à apporter :entre 0 et 1
+     * @param context Le context de l'application
+     * @return
+     */
+
+    public static Bitmap luminosite(Bitmap bmp, float comp,Context context)
+    {
+        //Le nouveau bitmap: le result
+        Bitmap bmp2 = bmp.copy(bmp.getConfig(),true);
+
+
+        //création de l'acces  au contexte renderscript.
+        RenderScript RS = RenderScript.create(context);
+
+        //l'allocation du bitmap à modifier
+        Allocation allocIn;
+        allocIn = Allocation.createFromBitmap(RS, bmp, Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
+
+
+        //l'allocation du bitmap resultat.
+        Allocation allocOut = Allocation.createTyped(RS, allocIn.getType());
+
+
+        ScriptC_luminosite script = new ScriptC_luminosite(RS);
+        script.set_comp(comp);
+        script.forEach_root(allocIn,allocOut);
+
+        allocOut.copyTo(bmp2);
+
+        script.destroy();
+        RS.finish();
+        return bmp2;
+
+
+
+    }
+
+    /**Fonction d'extension linéaire de la luminance
+     *
+     *
+     *
+     *
+     * @param bmp Le bitmap à modifier
+     * @param min la luminance min
+     * @param max la luminance max
+     * @param context le context de l'application
+     * @return
+     */
+
+    public static Bitmap luminanceScr(Bitmap bmp, float min,float max,Context context)
+    {
+        //Le nouveau bitmap: le result
+        Bitmap bmp2 = bmp.copy(bmp.getConfig(),true);
+
+
+        //création de l'acces  au contexte renderscript.
+        RenderScript RS = RenderScript.create(context);
+
+        //l'allocation du bitmap à modifier
+        Allocation allocIn;
+        allocIn = Allocation.createFromBitmap(RS, bmp, Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
+
+
+        //l'allocation du bitmap resultat.
+        Allocation allocOut = Allocation.createTyped(RS, allocIn.getType());
+
+        //Allocation intermédiaire
+        Allocation allocInter = Allocation.createTyped(RS, Type.createXY(RS,Element.F32_4(RS),bmp2.getWidth(),bmp2.getHeight()));
+
+
+        ScriptC_HSV_RGB script = new ScriptC_HSV_RGB(RS);
+
+        ScriptC_intervalle scriptInter = new ScriptC_intervalle(RS);
+
+
+
+        //passage de RGB à HSV
+        script.forEach_toHSV(allocIn,allocInter);
+
+
+        //initialisation du min et du max de la nouvelle luminance.
+        scriptInter.set_maxN(max);
+        scriptInter.set_minN(min);
+
+        //calcul du min et du max de la luminance d'origine
+        scriptInter.forEach_calculerMinMax2(allocInter,allocInter);
+
+
+        //calcul des nouvelles luminances
+        scriptInter.forEach_inter2(allocInter,allocInter);
+
+
+
+
+
+        //repassage en RGB
+        script.forEach_toRGB(allocInter,allocOut);
+
+
+
+
+
+        allocOut.copyTo(bmp2);
+
+        script.destroy();
+        scriptInter.destroy();
+        RS.finish();
+
+        return bmp2;
+
+    }
+
+//useless
+    /*
     public static Bitmap extensionContraste(Bitmap bmp)
     {
         /*int coul;
@@ -227,11 +419,11 @@ public class ImageEdit {
         }
         bmp2.setPixels(pix,0,bmp2.getWidth(),0,0,bmp2.getWidth(),bmp2.getHeight());
 
-        return bmp2;*/
+        return bmp2;
         return changerContraste(bmp,0,255);
 
     }
-
+*/
 
     //Devenue aussi useless
 

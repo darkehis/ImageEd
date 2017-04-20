@@ -97,6 +97,41 @@ void calculerMinMax0(const float4* in,float4* out,uint32_t x,uint32_t y)
     }
 }
 
+void borner0(const float4* in,float4* out, uint32_t x,uint32_t y)
+{
+    float val = (*in).S0;
+    val = max(min(val,maxN),minN);
+
+    (*out) = (*in);
+
+    (*out).S0  = val;
+
+}
+
+void borner1(const float4* in,float4* out, uint32_t x,uint32_t y)
+{
+    float val = (*in).S1;
+    val = max(min(val,maxN),minN);
+
+    (*out) = (*in);
+
+    (*out).S1  = val;
+
+
+
+}
+
+void borner2(const float4* in,float4* out, uint32_t x,uint32_t y)
+{
+    float val = (*in).S2;
+    val = max(min(val,maxN),minN);
+
+    (*out) = (*in);
+
+    (*out).S2  = val;
+
+}
+
 void calculerMinMax1(const float4* in,float4* out,uint32_t x,uint32_t y)
 {
     if(initialise == 0)

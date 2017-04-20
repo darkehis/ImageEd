@@ -18,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
@@ -46,7 +47,7 @@ import static android.R.attr.onClick;
 import static android.R.attr.x;
 import static android.app.Activity.RESULT_OK;
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
-import static com.example.jonathan.imageed.R.drawable.test;
+//import static com.example.jonathan.imageed.R.drawable.test;
 import static java.security.AccessController.getContext;
 
 
@@ -69,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
         //Ajout de la barre d'outil
         /*Toolbar barreO = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(barreO);*/
+
+        calculTaillesMax();
 
         //Création de l'image de départ dans une view de type: MonImage
         Bitmap bmp = BitmapFactory.decodeResource(getResources(),R.drawable.test);
@@ -188,14 +191,14 @@ public class MainActivity extends AppCompatActivity {
 
             opt.inScaled = false;
             opt.inMutable = true;
-            _img.set_bmpBase(ImageEdit.apercu(BitmapFactory.decodeFile(_path,opt),1500));
+            _img.set_bmpBase(ImageEdit.apercu(BitmapFactory.decodeFile(_path,opt),_tailleMax));
 
 
         }
 
         //récupération d'un image à partir de la gallerie du téléphone.
         //code inspiré de : http://stackoverflow.com/questions/28530332/how-to-get-image-from-gallery
-        else if (requestCode == GALLERIE && resultCode == RESULT_OK)
+        else if (requestCode == GALERIE && resultCode == RESULT_OK)
         {
             Uri uriImg = data.getData();
             String[] colFich = { MediaStore.Images.Media.DATA };
@@ -268,7 +271,7 @@ public class MainActivity extends AppCompatActivity {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
-        startActivityForResult(galleryIntent, GALLERIE);
+        startActivityForResult(galleryIntent, GALERIE);
 
 
     }
@@ -412,7 +415,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 Intent intent = new Intent(getApplicationContext(),ChoixModif.class);
-                intent.putExtra("apercu",_img.apercu(300));
+                intent.putExtra("apercu",_img.apercu(_tailleMaxApercu));
                 startActivityForResult(intent,MODIF_IMG);
 
             }
@@ -427,7 +430,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(),ChoixConv.class);
-                intent.putExtra("apercu",_img.apercu(300));
+                intent.putExtra("apercu",_img.apercu(_tailleMaxApercu));
                 startActivityForResult(intent,MODIF_CONV);
             }
         });
@@ -518,7 +521,7 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.filtres:
                 intent = new Intent(getBaseContext(),ChoixModif.class);
-                intent.putExtra("apercu",_img.apercu(300));
+                intent.putExtra("apercu",_img.apercu(_tailleMaxApercu));
                 startActivityForResult(intent,MODIF_IMG);
                 return true;
 
@@ -558,6 +561,21 @@ public class MainActivity extends AppCompatActivity {
         return false;}
 
 
+
+    protected void calculTaillesMax()
+    {
+        DisplayMetrics metric = getResources().getDisplayMetrics();
+
+        //calcul de la taille en pixel de l'aperçu
+        _tailleMaxApercu = (int)(190*metric.density);
+
+
+        //on ne travail que sur des image dont aucune des dimensions ne dépasse la heuteur de l'écran multiplié par un facteur:
+        _tailleMax = (int)(metric.heightPixels*1.6);
+
+    }
+
+
     //les code des request code des intents.
 
     public static final int GRISER = 0;
@@ -568,7 +586,7 @@ public class MainActivity extends AppCompatActivity {
     public static final int PRENDRE_PHOTO = 5;
 
     public static final int MODIF_IMG = 6;
-    public static final int GALLERIE = 7;
+    public static final int GALERIE = 7;
 
     public static final int FILTRER_TEINTE = 8;
 
@@ -581,4 +599,9 @@ public class MainActivity extends AppCompatActivity {
     public static final int GAUSSIEN = 14;
     public static final int MOYENNE= 15;
     public static final int SEUIL = 16;
+
+
+    public static int _tailleMax;
+    public static int _tailleMaxApercu;
+
 }

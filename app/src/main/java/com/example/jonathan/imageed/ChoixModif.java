@@ -194,12 +194,12 @@ public class ChoixModif extends Activity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
 
-                _maxCont = (float) progress/100;
-                SeekBar bar2 = (SeekBar)findViewById(R.id.bar_contr1);
-                bar2.setProgress(Math.min(progress,bar2.getProgress()));
-                _minCont = (float) bar2.getProgress()/100;
+                _minSat = (float) progress/100;
+                SeekBar bar2 = (SeekBar)findViewById(R.id.bar_sat2);
+                bar2.setProgress(Math.max(progress,bar2.getProgress()));
+                _maxSat = (float) bar2.getProgress()/100;
 
-                _curApercu = ImageEdit.extensionLineaireScr(_apercu,_minCont,_maxCont,getApplicationContext());
+                _curApercu = ImageEdit.saturationSrc(_apercu,_minSat,_maxSat,getApplicationContext());
 
                 textView10.setText("Contraste : " + _minCont + "/" + _maxCont);
                 img.setImageBitmap(_curApercu);
@@ -230,12 +230,12 @@ public class ChoixModif extends Activity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
 
-                _maxCont = (float) progress/100;
-                SeekBar bar2 = (SeekBar)findViewById(R.id.bar_contr1);
+                _maxSat = (float) progress/100;
+                SeekBar bar2 = (SeekBar)findViewById(R.id.bar_sat1);
                 bar2.setProgress(Math.min(progress,bar2.getProgress()));
-                _minCont = (float) bar2.getProgress()/100;
+                _minSat = (float) bar2.getProgress()/100;
 
-                _curApercu = ImageEdit.extensionLineaireScr(_apercu,_minCont,_maxCont,getApplicationContext());
+                _curApercu = ImageEdit.saturationSrc(_apercu,_minSat,_maxSat,getApplicationContext());
 
                 textView10.setText("Contraste : " + _minCont + "/" + _maxCont);
                 img.setImageBitmap(_curApercu);
@@ -374,8 +374,8 @@ public class ChoixModif extends Activity {
                 bar2.setProgress(Math.max(_minLum,bar2.getProgress()));
                 _maxLum = bar2.getProgress();
 
-                _curApercu = ImageEdit.chgLum(_apercu,(float)(_minLum)/100.f,(float)(_maxLum)/100.f,getApplicationContext());
-                textView2.setText("Luminosité : " + _minLum + "/" + _maxLum);
+                _curApercu = ImageEdit.luminanceScr(_apercu,(float)(_minLum)/100.f,(float)(_maxLum)/100.f,getApplicationContext());
+                textView2.setText("Luminance : " + _minLum + "/" + _maxLum);
                 img.setImageBitmap(_curApercu);
 
             }
@@ -405,7 +405,7 @@ public class ChoixModif extends Activity {
                 bar2.setProgress(Math.min(_maxLum,bar2.getProgress()));
                 _minLum = bar2.getProgress();
 
-                _curApercu = ImageEdit.chgLum(_apercu,(float)(_minLum)/100.f,(float)(_maxLum)/100.f,getApplicationContext());
+                _curApercu = ImageEdit.luminanceScr(_apercu,(float)(_minLum)/100.f,(float)(_maxLum)/100.f,getApplicationContext());
 
                 textView2.setText("Luminance : " + _minLum + "/" + _maxLum);
                 img.setImageBitmap(_curApercu);
@@ -479,6 +479,8 @@ public class ChoixModif extends Activity {
 
     protected float _minCont;
     protected float _maxCont;
+    protected float _minSat;
+    protected float _maxSat;
     protected float _seuil;
     protected Bitmap _apercu;
     protected Bitmap _curApercu;
