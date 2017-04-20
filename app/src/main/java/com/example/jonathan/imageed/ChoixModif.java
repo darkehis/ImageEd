@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
 
@@ -71,46 +72,11 @@ public class ChoixModif extends Activity {
             @Override
             public void onClick(View v) {
                 _curAppercu = ImageEdit.egaliserSrc(_appercu,getApplicationContext());
-                Log.i("ega","ok");
                 img.setImageBitmap(_curAppercu);
                 _curModif = MainActivity.EGALISER;
             }
         });
 
-        bout = (Button) findViewById(R.id.bout_dim_cont);
-
-        bout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                _curModif = MainActivity.DIM_CONTRASTE;
-            }
-        });
-
-        bout = (Button) findViewById(R.id.bout_ext_cont);
-
-        bout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                _curModif = MainActivity.TEST;
-
-
-                float matrice[][] = MatriceGen.laplacien();
-                _curAppercu = ImageEdit.convolutionScr(_appercu,matrice,getApplicationContext());
-                img.setImageBitmap(_curAppercu);
-            }
-        });
-
-
-        bout = (Button)findViewById(R.id.bout_teinte);
-        bout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                _curModif = MainActivity.CHG_TEINTE;
-                _curAppercu = ImageEdit.sobelSrc(_appercu,getApplicationContext());
-                img.setImageBitmap(_curAppercu);
-
-            }
-        });
 
 
         SeekBar bar = (SeekBar) findViewById(R.id.bar_chg_teinte);
@@ -147,7 +113,41 @@ public class ChoixModif extends Activity {
             }
         });
 
+        final TextView textView = (TextView) findViewById(R.id.textSeuil);
 
+
+        bar = (SeekBar)findViewById(R.id.bar_seuil);
+
+        bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+                float progressValue = (float) progress/10;
+                if (fromUser) {
+                    _curModif = MainActivity.SEUIL;
+                    _seuil = progressValue;
+                    _curAppercu = ImageEdit.seuilScr(_appercu,_seuil, getApplicationContext());
+                    textView.setText("Seuil : " + _seuil + "/" + seekBar.getMax()/10);
+                    img.setImageBitmap(_curAppercu);
+
+                }
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar)
+            {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        final TextView textView4 = (TextView) findViewById(R.id.textfiltreteinte);
         bar = (SeekBar)findViewById(R.id.bar_filtrer_teinte);
 
         bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -157,6 +157,7 @@ public class ChoixModif extends Activity {
                     _curModif = MainActivity.FILTRER_TEINTE;
                     _teinte2 = progress;
                     _curAppercu = ImageEdit.filtrerTeinte(_appercu, _teinte2, _tolerance, getApplicationContext());
+
                     img.setImageBitmap(_curAppercu);
 
                     float[] coul = new float[3];
@@ -183,6 +184,8 @@ public class ChoixModif extends Activity {
             }
         });
 
+        final TextView textView3 = (TextView) findViewById(R.id.texttole);
+
         bar = (SeekBar)findViewById(R.id.bar_tolerance);
 
         bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -192,6 +195,11 @@ public class ChoixModif extends Activity {
                     _curModif = MainActivity.FILTRER_TEINTE;
                     _tolerance = progress;
                     _curAppercu = ImageEdit.filtrerTeinte(_appercu, _teinte2, _tolerance, getApplicationContext());
+                    textView3.setText("Tolérance : " + _tolerance + "/" + seekBar.getMax());
+                    if (_tolerance <= 1) {
+                        textView4.setText("Filtrer " + _tolerance + " teinte");
+                    }
+                    else textView4.setText("Filtrer " + _tolerance + " teintes");
                     img.setImageBitmap(_curAppercu);
 
 
@@ -211,7 +219,7 @@ public class ChoixModif extends Activity {
             }
         });
 
-
+        final TextView textView2 = (TextView) findViewById(R.id.textLum);
         bar = (SeekBar) findViewById(R.id.bar_lum_min);
 
         bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -224,6 +232,7 @@ public class ChoixModif extends Activity {
                 _maxLum = bar2.getProgress();
 
                 _curAppercu = ImageEdit.chgLum(_appercu,(float)(_minLum)/100.f,(float)(_maxLum)/100.f,getApplicationContext());
+                textView2.setText("Luminosité : " + _minLum + "/" + _maxLum);
                 img.setImageBitmap(_curAppercu);
 
             }
@@ -240,6 +249,7 @@ public class ChoixModif extends Activity {
         });
 
 
+
         bar = (SeekBar) findViewById(R.id.bar_lum_max);
         bar.setProgress(_maxLum);
 
@@ -253,6 +263,8 @@ public class ChoixModif extends Activity {
                 _minLum = bar2.getProgress();
 
                 _curAppercu = ImageEdit.chgLum(_appercu,(float)(_minLum)/100.f,(float)(_maxLum)/100.f,getApplicationContext());
+
+                textView2.setText("Luminosité : " + _minLum + "/" + _maxLum);
                 img.setImageBitmap(_curAppercu);
 
             }
@@ -288,6 +300,7 @@ public class ChoixModif extends Activity {
                 resultat.putExtra("teinte",_teinte);
                 resultat.putExtra("teinte2",_teinte2);
                 resultat.putExtra("tolerance",_tolerance);
+                resultat.putExtra("seuil",_seuil);
                 setResult(RESULT_OK,resultat);
                 finish();
             }
@@ -297,6 +310,7 @@ public class ChoixModif extends Activity {
     }
 
 
+    protected float _seuil;
     protected Bitmap _appercu;
     protected Bitmap _curAppercu;
     protected int _teinte;

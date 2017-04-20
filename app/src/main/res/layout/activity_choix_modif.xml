@@ -52,86 +52,178 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <Button
                 android:id="@+id/bout_griser"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Griser" />
+                android:text="Griser"
+                android:layout_marginTop="13dp" />
 
             <Button
                 android:id="@+id/bout_ega"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Egaliser" />
+                android:text="Egaliser"
+                android:layout_marginBottom="15dp" />
 
-            <Button
-                android:id="@+id/bout_dim_cont"
+            <TextView
+                android:id="@+id/textSeuil"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Diminuer Contraste" />
+                android:text="Seuil : 0/50"
+                android:gravity="center_horizontal"
+                android:textColor="#000000"
+                android:textSize="19dp" />
 
-            <Button
-                android:id="@+id/bout_ext_cont"
+            <SeekBar
+                android:id="@+id/bar_seuil"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Extension Contraste" />
+                android:max="30"
+                android:progress="1"
+                android:layout_marginBottom="18dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textSat1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Sat1 : 0/?"
+                    android:gravity="center_horizontal"
+                    android:textColor="#000000"
+                    android:textSize="19dp" />
+
+                <TextView
+                    android:id="@+id/textSat2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Sat2 : 0/?"
+                    android:gravity="center_horizontal"
+                    android:textColor="#000000"
+                    android:textSize="19dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginBottom="18dp">
+
+                <SeekBar
+                    android:id="@+id/bar_sat1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <SeekBar
+                    android:id="@+id/bar_sat2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textchgteinte"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Changement de teinte"
+                android:gravity="center_horizontal"
+                android:textColor="#000000"
+                android:textSize="19dp"/>
 
             <SeekBar
                 android:id="@+id/bar_chg_teinte"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:max="360"
-                android:progress="1" />
+                android:progress="1"
+                android:layout_marginBottom="18dp"/>
 
-            <Button
-                android:id="@+id/bout_teinte"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textfiltreteinte"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:text="Filtrer 0 teinte"
+                    android:textColor="#000000"
+                    android:textSize="19dp" />
+
+                <TextView
+                    android:id="@+id/texttole"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:text="Tolérance : 0/360"
+                    android:textColor="#000000"
+                    android:textSize="19dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginBottom="18dp">
+
+                <SeekBar
+                    android:id="@+id/bar_filtrer_teinte"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:max="360" />
+
+                <SeekBar
+                    android:id="@+id/bar_tolerance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:max="360" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textLum"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Changer teinte" />
+                android:text="Luminosité : 0/100"
+                android:gravity="center_horizontal"
+                android:textColor="#000000"
+                android:textSize="19dp"  />
 
-            <SeekBar
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/bar_filtrer_teinte"
-                android:max="360" />
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Button" />
+                <SeekBar
+                    android:id="@+id/bar_lum_min"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:max="100" />
 
-            <SeekBar
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/bar_tolerance"
-                android:max="360"/>
+                <SeekBar
+                    android:id="@+id/bar_lum_max"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:max="100" />
+            </LinearLayout>
 
-            <Button
-                android:id="@+id/button4"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Button" />
-
-            <SeekBar
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/bar_lum_min"
-                android:max="100" />
-
-            <Button
-                android:id="@+id/button5"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Button" />
-
-            <SeekBar
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/bar_lum_max"
-                android:max="100" />
         </LinearLayout>
     </ScrollView>
 

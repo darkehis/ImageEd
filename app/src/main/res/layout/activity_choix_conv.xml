@@ -64,24 +64,76 @@
                 android:id="@+id/bout_laplacien"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Laplacien" />
+                android:text="Laplacien"
+                android:layout_marginBottom="15dp"  />
 
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
 
-            <SeekBar
-                android:id="@+id/bar_gaussien"
+                <TextView
+                    android:id="@+id/textgauss"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:text="Gaussien : 1 x 1"
+                    android:textColor="#000000"
+                    android:textSize="19dp" />
+
+                <TextView
+                    android:id="@+id/textSigma"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:text="Sigma 0/5"
+                    android:textColor="#000000"
+                    android:textSize="19dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginBottom="15dp" >
+
+                <SeekBar
+                    android:id="@+id/bar_gaussien1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:max="25"
+                    android:progress="1" />
+
+                <SeekBar
+                    android:id="@+id/bar_gaussien2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:max="50"
+                    android:progress="1" />
+
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/textmoy"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:max="49"
-                android:progress="2" />
-
+                android:gravity="center_horizontal"
+                android:text="Moyenne : 1 x 1"
+                android:textColor="#000000"
+                android:textSize="19dp" />
 
             <SeekBar
+                android:id="@+id/bar_moyenne"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/bar_moyennant"
-                android:max="49"
-                android:progress="2"/>
+                android:max="25"
+                android:progress="1"/>
 
 
         </LinearLayout>

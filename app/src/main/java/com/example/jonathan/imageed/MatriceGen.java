@@ -81,13 +81,14 @@ public class MatriceGen {
         {
             for(int j = 0;j<taille;j++)
             {
-                mat[i][j] = (1/(float)(Math.PI*sigma*sigma))*(float)Math.exp((-1)*(i*i+j*j)/(2*sigma*sigma));
+                mat[i][j] = (float)((1/((2*Math.PI*sigma*sigma)))*Math.exp((-1)*(i*i+j*j)/(2*sigma*sigma)));
             }
         }
 
         return normalise(mat);
 
     }
+
 
     protected static float[][] normalise(float[][] mat)
     {

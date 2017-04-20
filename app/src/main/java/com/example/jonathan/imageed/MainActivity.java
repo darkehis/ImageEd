@@ -166,6 +166,22 @@ public class MainActivity extends AppCompatActivity {
                     _img.set_bmp(ImageEdit.convolutionScr(_img.get_bmp(),MatriceGen.laplacien(),getApplicationContext()));
 
                     break;
+                case GAUSSIEN:
+
+                    _img.set_bmp(ImageEdit.convolutionScr(_img.get_bmp(),MatriceGen.gaussien(data.getIntExtra("gaussien1",1),data.getFloatExtra("gaussien2",1)),getApplicationContext()));
+
+                    break;
+
+                case MOYENNE:
+
+                    _img.set_bmp(ImageEdit.convolutionScr(_img.get_bmp(),MatriceGen.moyenne(data.getIntExtra("moyenne",1)),getApplicationContext()));
+
+                    break;
+                case SEUIL:
+
+                    _img.set_bmp(ImageEdit.seuilScr(_img.get_bmp(),data.getFloatExtra("seuil",1),getApplicationContext()));
+
+                    break;
 
             }
 
@@ -573,4 +589,7 @@ public class MainActivity extends AppCompatActivity {
     public static final int MODIF_CONV = 10;
     public static final int SOBEL = 12;
     public static final int LAPLACIEN = 13;
+    public static final int GAUSSIEN = 14;
+    public static final int MOYENNE= 15;
+    public static final int SEUIL = 16;
 }

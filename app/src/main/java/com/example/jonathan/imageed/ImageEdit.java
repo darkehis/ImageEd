@@ -809,6 +809,8 @@ public class ImageEdit {
 
     }
 
+
+
     public static Bitmap filtrerTeinte(Bitmap bmp, int teinte, int tolerance,Context context)
     {
 
