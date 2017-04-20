@@ -31,13 +31,6 @@ public class ChoixModif extends Activity {
         super.onCreate(savedInstanceState);
 
 
-        //initialisation
-        /*_teinte = 1;
-        _tolerance = 1;
-        _teinte2 = 1;
-        _minLum = 1;
-        _maxLum = 100;*/
-
         //Assignation de la layout à l'activité.
         setContentView(R.layout.activity_choix_modif);
         final Intent intent = getIntent();
@@ -123,16 +116,16 @@ public class ChoixModif extends Activity {
 
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
+                _curModif = MainActivity.CONTRASTE;
+                _minCont = (float) progress/100;
+                SeekBar bar2 = (SeekBar)findViewById(R.id.bar_contr2);
+                bar2.setProgress(Math.max(progress,bar2.getProgress()));
+                _maxCont = (float) bar2.getProgress()/100;
 
-                    _minCont = (float) progress/100;
-                    SeekBar bar2 = (SeekBar)findViewById(R.id.bar_contr2);
-                    bar2.setProgress(Math.max(progress,bar2.getProgress()));
-                    _maxCont = (float) bar2.getProgress()/100;
+                _curApercu = ImageEdit.extensionLineaireScr(_apercu,_minCont,_maxCont,getApplicationContext());
 
-                    _curApercu = ImageEdit.extensionLineaireScr(_apercu,_minCont,_maxCont,getApplicationContext());
-
-                    textView10.setText("Contraste : " + _minCont + "/" + _maxCont);
-                    img.setImageBitmap(_curApercu);
+                textView10.setText("Contraste : " + _minCont + "/" + _maxCont);
+                img.setImageBitmap(_curApercu);
 
 
 
@@ -157,49 +150,13 @@ public class ChoixModif extends Activity {
 
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
+                _curModif = MainActivity.CONTRASTE;
+                _maxCont = (float) progress/100;
+                SeekBar bar2 = (SeekBar)findViewById(R.id.bar_contr1);
+                bar2.setProgress(Math.min(progress,bar2.getProgress()));
+                _minCont = (float) bar2.getProgress()/100;
 
-                    _maxCont = (float) progress/100;
-                    SeekBar bar2 = (SeekBar)findViewById(R.id.bar_contr1);
-                    bar2.setProgress(Math.min(progress,bar2.getProgress()));
-                    _minCont = (float) bar2.getProgress()/100;
-
-                    _curApercu = ImageEdit.extensionLineaireScr(_apercu,_minCont,_maxCont,getApplicationContext());
-
-                    textView10.setText("Contraste : " + _minCont + "/" + _maxCont);
-                    img.setImageBitmap(_curApercu);
-
-
-
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar)
-            {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
-        final TextView textView11 = (TextView) findViewById(R.id.textSat1);
-
-        bar = (SeekBar)findViewById(R.id.bar_sat1);
-
-        bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-
-                _minSat = (float) progress/100;
-                SeekBar bar2 = (SeekBar)findViewById(R.id.bar_sat2);
-                bar2.setProgress(Math.max(progress,bar2.getProgress()));
-                _maxSat = (float) bar2.getProgress()/100;
-
-                _curApercu = ImageEdit.saturationSrc(_apercu,_minSat,_maxSat,getApplicationContext());
+                _curApercu = ImageEdit.extensionLineaireScr(_apercu,_minCont,_maxCont,getApplicationContext());
 
                 textView10.setText("Contraste : " + _minCont + "/" + _maxCont);
                 img.setImageBitmap(_curApercu);
@@ -220,7 +177,42 @@ public class ChoixModif extends Activity {
             }
         });
 
-        final TextView textView12 = (TextView) findViewById(R.id.textSat2);
+        final TextView textView11 = (TextView) findViewById(R.id.textSat);
+
+        bar = (SeekBar)findViewById(R.id.bar_sat1);
+
+        bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+
+                _minSat = (float) progress/100;
+                SeekBar bar2 = (SeekBar)findViewById(R.id.bar_sat2);
+                bar2.setProgress(Math.max(progress,bar2.getProgress()));
+                _maxSat = (float) bar2.getProgress()/100;
+
+                _curApercu = ImageEdit.saturationSrc(_apercu,_minSat,_maxSat,getApplicationContext());
+
+                textView11.setText("Saturation : " + _minSat + "/" + _maxSat);
+                img.setImageBitmap(_curApercu);
+
+
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar)
+            {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
 
         bar = (SeekBar)findViewById(R.id.bar_sat2);
 
@@ -237,7 +229,7 @@ public class ChoixModif extends Activity {
 
                 _curApercu = ImageEdit.saturationSrc(_apercu,_minSat,_maxSat,getApplicationContext());
 
-                textView10.setText("Contraste : " + _minCont + "/" + _maxCont);
+                textView11.setText("Saturation : " + _minSat + "/" + _maxSat);
                 img.setImageBitmap(_curApercu);
 
 
@@ -369,6 +361,7 @@ public class ChoixModif extends Activity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
+                _curModif = MainActivity.LUMINANCE;
                 _minLum = progress;
                 SeekBar bar2 = (SeekBar)findViewById(R.id.bar_lum_max);
                 bar2.setProgress(Math.max(_minLum,bar2.getProgress()));
@@ -394,20 +387,46 @@ public class ChoixModif extends Activity {
 
 
         bar = (SeekBar) findViewById(R.id.bar_lum_max);
-        bar.setProgress(_maxLum);
 
         bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
+                _curModif = MainActivity.LUMINANCE;
                 _maxLum = progress;
                 SeekBar bar2 = (SeekBar)findViewById(R.id.bar_lum_min);
                 bar2.setProgress(Math.min(_maxLum,bar2.getProgress()));
                 _minLum = bar2.getProgress();
-
                 _curApercu = ImageEdit.luminanceScr(_apercu,(float)(_minLum)/100.f,(float)(_maxLum)/100.f,getApplicationContext());
 
                 textView2.setText("Luminance : " + _minLum + "/" + _maxLum);
+                img.setImageBitmap(_curApercu);
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        final TextView textView13 = (TextView) findViewById(R.id.textLumino);
+
+        bar = (SeekBar) findViewById(R.id.bar_lumino);
+
+        bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+                _curModif = MainActivity.LUMINOSITE;
+                _lumino = (float) (progress - 100)/100;
+                _curApercu = ImageEdit.luminosite(_apercu,_lumino,getApplicationContext());
+                textView13.setText("Luminosité : -1/" + _lumino + "/1");
                 img.setImageBitmap(_curApercu);
 
             }
@@ -439,7 +458,8 @@ public class ChoixModif extends Activity {
                 bar2 = (SeekBar)findViewById(R.id.bar_sat1);
                 bar2.setProgress(0);
                 bar2 = (SeekBar)findViewById(R.id.bar_sat2);
-                bar2.setProgress(0);
+                bar2.setProgress(100);
+                textView11.setText("Saturation : 0.0/1.0");
                 bar2 = (SeekBar)findViewById(R.id.bar_chg_teinte);
                 bar2.setProgress(0);
                 bar2 = (SeekBar)findViewById(R.id.bar_filtrer_teinte);
@@ -453,6 +473,9 @@ public class ChoixModif extends Activity {
                 bar2 = (SeekBar)findViewById(R.id.bar_lum_max);
                 bar2.setProgress(100);
                 textView2.setText("Luminance : 0/100" );
+                bar2 = (SeekBar)findViewById(R.id.bar_lumino);
+                bar2.setProgress(100);
+                textView13.setText("Luminosité : -1/0.0/1" );
                 img.setImageBitmap(_apercu);
             }
         });
@@ -469,6 +492,11 @@ public class ChoixModif extends Activity {
                 resultat.putExtra("teinte2",_teinte2);
                 resultat.putExtra("tolerance",_tolerance);
                 resultat.putExtra("seuil",_seuil);
+                resultat.putExtra("contraste1",_minCont);
+                resultat.putExtra("contraste2",_maxCont);
+                resultat.putExtra("luminosite",_lumino);
+                resultat.putExtra("lum1",_minLum);
+                resultat.putExtra("lum2",_maxLum);
                 setResult(RESULT_OK,resultat);
                 finish();
             }
@@ -477,6 +505,7 @@ public class ChoixModif extends Activity {
 
     }
 
+    protected float _lumino;
     protected float _minCont;
     protected float _maxCont;
     protected float _minSat;

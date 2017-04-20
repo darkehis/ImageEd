@@ -14,6 +14,8 @@ int right;
 int bottom;
 float zoom;
 
+//Script de zoom par interpolation
+
 
 void root(const uchar4* in,uchar4* out,uint32_t x,uint32_t y) {
   int xO,yO;

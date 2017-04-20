@@ -9,7 +9,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.jonathan.imageed.ChoixModif">
+    tools:context="com.example.jonathan.imageed.ChoixModif"
+    android:background="#000000">
 
     <Button
         android:text="Confirmer"
@@ -54,12 +55,38 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <Button
-                android:id="@+id/bout_griser"
+            <TextView
+                android:id="@+id/textLum"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Griser"
-                android:layout_marginTop="13dp" />
+                android:gravity="center_horizontal"
+                android:text="Luminance : 0/100"
+                android:textColor="#FFFFFF"
+                android:textSize="19dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <SeekBar
+                    android:id="@+id/bar_lum_min"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:max="100"
+                    android:progress="0"
+                    android:progressBackgroundTint="#FFFFFF"/>
+
+                <SeekBar
+                    android:id="@+id/bar_lum_max"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:max="100"
+                    android:progress="100"
+                    android:progressBackgroundTint="#FFFFFF"/>
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/textContr"
@@ -67,7 +94,7 @@
                 android:layout_height="wrap_content"
                 android:text="Contraste : 0.0/1.0"
                 android:gravity="center_horizontal"
-                android:textColor="#000000"
+                android:textColor="#FFFFFF"
                 android:textSize="19dp" />
 
             <LinearLayout
@@ -81,7 +108,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:max="100"
-                    android:progress="0" />
+                    android:progress="0"
+                    android:progressBackgroundTint="#FFFFFF"/>
 
                 <SeekBar
                     android:id="@+id/bar_contr2"
@@ -89,7 +117,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:max="100"
-                    android:progress="100" />
+                    android:progress="100"
+                    android:progressBackgroundTint="#FFFFFF"/>
 
             </LinearLayout>
 
@@ -106,7 +135,7 @@
                 android:layout_height="wrap_content"
                 android:text="Seuil : 0.0/1.0"
                 android:gravity="center_horizontal"
-                android:textColor="#000000"
+                android:textColor="#FFFFFF"
                 android:textSize="19dp" />
 
             <SeekBar
@@ -115,34 +144,18 @@
                 android:layout_height="wrap_content"
                 android:max="20"
                 android:progress="0"
-                android:layout_marginBottom="18dp"/>
+                android:layout_marginBottom="18dp"
+                android:progressBackgroundTint="#FFFFFF"/>
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/textSat"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/textSat1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Sat1 : 0/?"
-                    android:gravity="center_horizontal"
-                    android:textColor="#000000"
-                    android:textSize="19dp" />
-
-                <TextView
-                    android:id="@+id/textSat2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Sat2 : 0/?"
-                    android:gravity="center_horizontal"
-                    android:textColor="#000000"
-                    android:textSize="19dp" />
-
-            </LinearLayout>
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="Saturation : 0.0/1.0"
+                android:textColor="#FFFFFF"
+                android:textSize="19dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -154,14 +167,29 @@
                     android:id="@+id/bar_sat1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:max="100"
+                    android:progress="0"
+                    android:progressBackgroundTint="#FFFFFF"/>
 
                 <SeekBar
                     android:id="@+id/bar_sat2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:max="100"
+                    android:progress="100"
+                    android:progressBackgroundTint="#FFFFFF"/>
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="______________________________________________"
+                android:layout_marginBottom="18dp"
+                android:textColor="#FE0000"
+                android:gravity="center_horizontal"/>
 
             <TextView
                 android:id="@+id/textchgteinte"
@@ -169,7 +197,7 @@
                 android:layout_height="wrap_content"
                 android:text="Changement de teinte"
                 android:gravity="center_horizontal"
-                android:textColor="#000000"
+                android:textColor="#FFFFFF"
                 android:textSize="19dp"/>
 
             <SeekBar
@@ -178,7 +206,13 @@
                 android:layout_height="wrap_content"
                 android:max="360"
                 android:progress="0"
-                android:layout_marginBottom="18dp"/>
+                android:progressBackgroundTint="#FFFFFF"/>
+
+            <Button
+                android:id="@+id/bout_griser"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Griser" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -192,7 +226,7 @@
                     android:layout_weight="1"
                     android:gravity="center_horizontal"
                     android:text="Filtrer 0 teinte"
-                    android:textColor="#000000"
+                    android:textColor="#FFFFFF"
                     android:textSize="19dp" />
 
                 <TextView
@@ -202,7 +236,7 @@
                     android:layout_weight="1"
                     android:gravity="center_horizontal"
                     android:text="Tolérance : 0/360"
-                    android:textColor="#000000"
+                    android:textColor="#FFFFFF"
                     android:textSize="19dp" />
             </LinearLayout>
 
@@ -217,46 +251,35 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:max="360" />
+                    android:max="360"
+                    android:progressBackgroundTint="#FFFFFF"/>
 
                 <SeekBar
                     android:id="@+id/bar_tolerance"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:max="360" />
+                    android:max="360"
+                    android:progressBackgroundTint="#FFFFFF"/>
+
             </LinearLayout>
 
             <TextView
-                android:id="@+id/textLum"
+                android:id="@+id/textLumino"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="Luminosité : -1/0.0/1"
                 android:gravity="center_horizontal"
-                android:text="Luminance : 0/100"
-                android:textColor="#000000"
+                android:textColor="#FFFFFF"
                 android:textSize="19dp" />
 
-            <LinearLayout
+            <SeekBar
+                android:id="@+id/bar_lumino"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <SeekBar
-                    android:id="@+id/bar_lum_min"
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
-                    android:layout_weight="1"
-                    android:max="100"
-                    android:progress="0"/>
-
-                <SeekBar
-                    android:id="@+id/bar_lum_max"
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
-                    android:layout_weight="1"
-                    android:max="100"
-                    android:progress="100"/>
-            </LinearLayout>
+                android:layout_height="wrap_content"
+                android:max="200"
+                android:progress="100"
+                android:progressBackgroundTint="#FFFFFF"/>
 
         </LinearLayout>
     </ScrollView>

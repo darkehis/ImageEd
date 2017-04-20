@@ -19,6 +19,9 @@ import android.widget.TextView;
  * Created by BENOIT on 22/03/2017.
  */
 
+
+//Activité qui préente le menu d'application de filtre de convolution
+
 public class ChoixConv extends Activity {
 
     @Override
@@ -34,6 +37,7 @@ public class ChoixConv extends Activity {
 
         final Intent intent = getIntent();
 
+        //obtention de l'aperçu
         _apercu = intent.getParcelableExtra("apercu");
         _curApercu = _apercu.copy(_apercu.getConfig(),true);
 
@@ -42,6 +46,7 @@ public class ChoixConv extends Activity {
 
         img.setImageBitmap(_curApercu);
 
+        //connexion des différents boutons
         Button bout = (Button) findViewById(R.id.bout_sobel);
         bout.setOnClickListener(new View.OnClickListener() {
 

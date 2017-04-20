@@ -9,7 +9,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.jonathan.imageed.ChoixModif">
+    tools:context="com.example.jonathan.imageed.ChoixModif"
+    android:background="#000000">
 
     <Button
         android:text="Confirmer"
@@ -80,7 +81,7 @@
                     android:layout_weight="1"
                     android:gravity="center_horizontal"
                     android:text="Gaussien : 1 x 1"
-                    android:textColor="#000000"
+                    android:textColor="#FFFFFF"
                     android:textSize="19dp" />
 
                 <TextView
@@ -90,7 +91,7 @@
                     android:layout_weight="1"
                     android:gravity="center_horizontal"
                     android:text="Sigma 0.0/5.0"
-                    android:textColor="#000000"
+                    android:textColor="#FFFFFF"
                     android:textSize="19dp" />
             </LinearLayout>
 
@@ -106,7 +107,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:max="19"
-                    android:progress="1" />
+                    android:progress="1"
+                    android:progressBackgroundTint="#FFFFFF"/>
 
                 <SeekBar
                     android:id="@+id/bar_gaussien2"
@@ -114,7 +116,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:max="50"
-                    android:progress="1" />
+                    android:progress="1"
+                    android:progressBackgroundTint="#FFFFFF"/>
 
             </LinearLayout>
 
@@ -125,15 +128,16 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:text="Moyenne : 1 x 1"
-                android:textColor="#000000"
-                android:textSize="19dp" />
+                android:textSize="19dp"
+                android:textColor="#FFFFFF"/>
 
             <SeekBar
                 android:id="@+id/bar_moyenne"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:max="19"
-                android:progress="1"/>
+                android:progress="1"
+                android:progressBackgroundTint="#FFFFFF"/>
 
 
         </LinearLayout>

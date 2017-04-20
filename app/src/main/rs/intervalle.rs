@@ -10,7 +10,7 @@ float maxN;
 float minN;
 int initialise;
 
-
+//les différente fonction d'extension linéaire sur chacune des coposant h s et v, normalisées et non normalisées
 void interNo(const float4* in,float4* out, uint32_t x,uint32_t y)
 {
     float val = ((*in).S0 - minV)/(maxV-minV);
@@ -74,7 +74,7 @@ void inter2(const float4* in,float4* out, uint32_t x,uint32_t y)
 }
 
 
-
+//Calcul des min et max pour chacune des différents composantes
 
 void calculerMinMax0(const float4* in,float4* out,uint32_t x,uint32_t y)
 {
@@ -97,40 +97,8 @@ void calculerMinMax0(const float4* in,float4* out,uint32_t x,uint32_t y)
     }
 }
 
-void borner0(const float4* in,float4* out, uint32_t x,uint32_t y)
-{
-    float val = (*in).S0;
-    val = max(min(val,maxN),minN);
-
-    (*out) = (*in);
-
-    (*out).S0  = val;
-
-}
-
-void borner1(const float4* in,float4* out, uint32_t x,uint32_t y)
-{
-    float val = (*in).S1;
-    val = max(min(val,maxN),minN);
-
-    (*out) = (*in);
-
-    (*out).S1  = val;
 
 
-
-}
-
-void borner2(const float4* in,float4* out, uint32_t x,uint32_t y)
-{
-    float val = (*in).S2;
-    val = max(min(val,maxN),minN);
-
-    (*out) = (*in);
-
-    (*out).S2  = val;
-
-}
 
 void calculerMinMax1(const float4* in,float4* out,uint32_t x,uint32_t y)
 {
@@ -174,6 +142,44 @@ void calculerMinMax2(const float4* in,float4* out,uint32_t x,uint32_t y)
     }
 }
 
+
+void borner0(const float4* in,float4* out, uint32_t x,uint32_t y)
+{
+    float val = (*in).S0;
+    val = max(min(val,maxN),minN);
+
+    (*out) = (*in);
+
+    (*out).S0  = val;
+
+}
+
+void borner1(const float4* in,float4* out, uint32_t x,uint32_t y)
+{
+    float val = (*in).S1;
+    val = max(min(val,maxN),minN);
+
+    (*out) = (*in);
+
+    (*out).S1  = val;
+
+
+
+}
+
+
+void borner2(const float4* in,float4* out, uint32_t x,uint32_t y)
+{
+    float val = (*in).S2;
+    val = max(min(val,maxN),minN);
+
+    (*out) = (*in);
+
+    (*out).S2  = val;
+
+}
+
+//a voir
 
 void toBmp(const float4* in,uchar4* out,uint32_t x,uint32_t y)
 {

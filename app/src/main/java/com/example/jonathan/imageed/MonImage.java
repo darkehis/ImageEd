@@ -85,7 +85,7 @@ public class MonImage extends ImageView {
                     else if(event.getActionMasked() == MotionEvent.ACTION_UP)
                     {
 
-                        //v.scrollTo(0,0);
+
 
                     }
                     else if (event.getActionMasked() == MotionEvent.ACTION_MOVE)
@@ -149,7 +149,6 @@ public class MonImage extends ImageView {
                         _ancRect = _rect;
                         _rect = new Rect((int)(_cX - nW/2),(int)(_cY - nH/2),(int)(_cX + nW/2),(int)(_cY + nH/2));
 
-                        //Log.i("zoom","on a:" + _rect.left + "," + _rect.top + "," + _rect.right + ","  + _rect.bottom);
 
                         majRect();
 
@@ -186,7 +185,6 @@ public class MonImage extends ImageView {
         _w = getWidth();
         _h = getHeight();
         //initialisation du rcatangle d'affichage
-        //_rect = new Rect(0,0,(int)(_w/2),(int)(_h/2));
 
         _rect = new Rect(0,0,_w,_h);
         _ancRect = new Rect(-1,-1,0,0);
@@ -206,13 +204,11 @@ public class MonImage extends ImageView {
 
         if(_rect.width()>_bmpBase.getWidth())
         {
-            //Log.i("maj_rect","trop large");
             float rap =  (float)(_h)/(float)(_w);
             _rect = new Rect(_rect.left,_rect.top,_bmpBase.getWidth() + _rect.left,(int)(rap*_bmpBase.getWidth()) + _rect.top);
         }
         if(_rect.height()>_bmpBase.getHeight())
         {
-            //Log.i("maj_rect","trop long");
             float rap = (float)(_w)/(float)(_h);
             _rect = new Rect(_rect.left,_rect.top,(int)(rap*_bmpBase.getHeight()) + _rect.left,_bmpBase.getHeight() + _rect.top);
         }
@@ -293,7 +289,14 @@ public class MonImage extends ImageView {
 
             }*/
 
-            //_curBmp = ImageEdit.zoomScr(bmpPrec,bmpOri,_w,_h, recDest,_context);
+
+            /*Le fait de ne recalculer que la bande nouvelle ne fonctionne pas car pour des questions d'arrondis dans l'utilisation du
+            script RS: cela donne un effet décalé à l'image zoomée.
+
+
+
+            */
+
 
         }
         else
@@ -327,125 +330,6 @@ public class MonImage extends ImageView {
     }
 
 
-    protected void zoom(double fZoom,float cx,float cy)
-    {
-
-        Log.i("bli","on zoome  de " + Double.toString(fZoom));
-
-        /*setScaleX((float)fZoom);
-        setScaleY((float) fZoom);*/
-
-
-        //taille de la view: attention doit etre drawed au moins une fois sinon ca plante: valeur 0.
-        //taille de l'image zoomée
-        int nW = this.getWidth();
-        int nH = this.getHeight();
-
-        //Log.i("bli", Integer.toString(nW));
-
-
-
-        //tableau de l'image zoomée
-        int[] pix2 = new int[nW*nH];
-
-
-        //création de l'image zoomée
-        Bitmap bmp2 = createBitmap(nW,nH,_bmp[_numCurBmp].getConfig());
-
-        //Taille du "bout" du bitmap de base sur lequel on va travailler : coma oon traitre pas toute l'image.
-        int w = (int)Math.floor(nW/fZoom);
-        int h = (int)Math.floor(nH/fZoom);
-        Log.i("bli","c'est nickel1");
-
-        //tableau du bout de bitmap de base
-        int[] pix1 = new int[w*h];
-
-        //on recreer un bitmap qui est la partie du bitmap de base sur laquelle on va zoomer.
-        int posX,posY;
-        posX = getScrollX();
-        posY = getScrollY();
-        //Log.i("bli","on a :" + Integer.toString(posX) + "," + Integer.toString(posY));
-
-        posX =(int) Math.floor(_cX /*- w/2*/);
-        posY = (int)Math.floor(_cY - h/2);
-
-        //TODO: refaire les checks de coordonnes-
-
-        posX = checkBound(posX,0,_curBmp.getWidth() - w);
-        posY = checkBound(posY,0,_curBmp.getHeight() - h);
-
-        Log.i("bli","on a " + Integer.toString(posX) + "," + Integer.toString(posY));
-        Bitmap bmp3 = createBitmap(_bmp[_numCurBmp],posX,posY,w,h);
-
-
-        //on recupere les pixels de l'image à zoomer
-        bmp3.getPixels(pix1,0,w,0,0,w,h);
-
-        //variables
-        //les coordonnées du pixel en cours, puis les coordonnés dans l'ancienne image des pixels utilisée pour la création d'un nouveau pixel
-        int x,y,x1,x2,x3,x4,y1,y2,y3,y4;
-
-
-        //la distance du pixel en cours au pixel de base en haut à gauche de celui ci
-        double dx,dy;
-
-
-        //coord des derniers pixels de l'ancienne image directement copié
-        //on boucle sur le nouveau tableau de pixels
-        for(int i =0;i<pix2.length;i++)
-        {
-            //calcul des coordonnées du pixel à creer
-            x = i%nW;
-            y = i/nW;
-
-
-            //récuperation des 4 pixels nécessaire pour le calcul de la moyenne
-            //variables superfétatoires: uniquement pour la lisibilité
-            x1 = (int) Math.floor(x/fZoom);
-            x2 = x1+1;
-            x3 = x1;
-            x4 = x1+1;
-
-            y1  = (int) Math.floor(y/fZoom);
-
-            y2 = y1+1;
-            y3 = y1;
-            y4 = y1+1;
-
-            dx = x/fZoom - x1;
-            dy = y/fZoom - y1;
-
-            //pour l'instant zoom bourrin
-           // pix2[i] = pix1[_bmp.getWidth()*y1 + x1];
-
-            //zoom avec interpolation
-            //on verifie qu'on ne sort pas de l'image
-            if(x4<w && y4<h)
-            {
-                if(i == 0)
-                    pix2[i] = moyennePix(pix1[w*y1 + x1],pix1[w*y2 + x2],pix1[w*y3 + x3],pix1[w*y4 + x4],fZoom,dx,dy,true);
-                else
-                    pix2[i] = moyennePix(pix1[w*y1 + x1],pix1[w*y2 + x2],pix1[w*y3 + x3],pix1[w*y4 + x4],fZoom,dx,dy,false);
-
-            }
-
-
-        }
-
-        bmp2.setPixels(pix2,0,nW,0,0,nW,nH);
-
-
-        _curBmp = bmp2;
-        setImageBitmap(bmp2);
-        scrollTo(0,0);
-        _isZoom = true;
-        //setImageBitmap(bmp3);
-
-        //setScaleType(ScaleType.CENTER);
-
-    }
-
-
     //calcul de distance netre 2 points;
     protected double distance(float x1,float y1,float x2, float y2)
     {
@@ -453,31 +337,6 @@ public class MonImage extends ImageView {
         return dist;
     }
 
-
-    //calcul de la moyenne des differents composantes des pixels
-    protected int moyennePix(int p1,int p2,int p3, int p4,double fZoom, double dx,double dy,boolean v)
-    {
-
-        int p;
-        //distance à chaque pixel
-        double d1,d2;
-
-        int r,g,b;
-
-        d1 = dx/fZoom;
-        d2 = dy/fZoom;
-
-        /*if(v)
-            Log.i("bli",Double.toString(d1) + "," +Double.toString(d2) + "," +Double.toString(d3) + "," +Double.toString(d4) + "," +Double.toString(dT));
-*/
-        r = (int) (Math.floor((1-d1)*(1-d2)*Color.red(p1) + (1-d1)*(d2)*Color.red(p3) + (1-d2)*(d1)*Color.red(p2) + (d1)*(d2)*Color.red(p4)));
-        g = (int) (Math.floor((1-d1)*(1-d2)*Color.green(p1) + (1-d1)*(d2)*Color.green(p3) + (1-d2)*(d1)*Color.green(p2) + (d1)*(d2)*Color.green(p4)));
-        b = (int) (Math.floor((1-d1)*(1-d2)*Color.blue(p1) + (1-d1)*(d2)*Color.blue(p3) + (1-d2)*(d1)*Color.blue(p2) + (d1)*(d2)*Color.blue(p4)));
-        p = Color.argb(255,r,g,b);
-
-        return p;
-
-    }
 
     /**
      *
@@ -525,45 +384,6 @@ public class MonImage extends ImageView {
 
     }
 
-    protected int checkBound(int n,int min,int max)
-    {
-        int diff = 0;
-
-
-        if(n<min)
-        {
-            diff = n-min;
-            n = min;
-
-        }
-        else if(n> max)
-        {
-            diff =  n-max;
-            n = max;
-        }
-
-        return n;
-    }
-
-    protected double checkBound(double n, double min, double max)
-    {
-        double diff = 0;
-
-        if(n<min)
-        {
-            diff = n-min;
-            n = min;
-        }
-        else if(n> max)
-        {
-            diff =  n-max;
-            n = max;
-        }
-
-        return n;
-    }
-
-    //fonctions de modification de l'image
 
 
 
@@ -653,8 +473,6 @@ public class MonImage extends ImageView {
     //distance de départ et de fin entre les 2 touch
     protected double _distanceS;
     protected double _distanceF;
-    //TODO voir i ca sert toujours
-    protected boolean _isZoom;
-
+    
 
 }

@@ -3,7 +3,7 @@
 
 
 
-//A faire retenir les nouvelle valeur dans une allocation puis reechelonner de facon sympas
+//Script d'application d'un filtre de convolution
 
 rs_allocation matrice2;
 

@@ -37,38 +37,6 @@ import static android.renderscript.Allocation.createSized;
 public class ImageEdit {
 
 
-    /**
-     *Fonction Java de grisage de l'image: maintenant inutilisé.
-     *
-     * @param bmp le Bitmap à modifier.
-     * @return
-     */
-
-    //useless
-    /*
-    public static Bitmap griser(Bitmap bmp)
-    {
-        int coul,r,g,b,gr;
-        int[] pix = new int[bmp.getWidth()*bmp.getHeight()];
-        Bitmap bmp2 = bmp.copy(bmp.getConfig(),true);
-        bmp.getPixels(pix,0,bmp.getWidth(),0,0,bmp.getWidth(),bmp.getHeight());
-
-        //on boucle sur l'array de pixels
-        for(int i =0;i<pix.length;i++)
-        {
-            coul = pix[i];
-            r = Color.red(coul);
-            g = Color.green(coul);
-            b = Color.blue(coul);
-            gr = (int)(0.3*r + 0.59*g + 0.11*b);
-            pix[i] = Color.argb(255,gr,gr,gr);
-        }
-        bmp2.setPixels(pix,0,bmp2.getWidth(),0,0,bmp2.getWidth(),bmp2.getHeight());
-
-        return bmp2;
-
-    }*/
-
     /**  Fonction faisant appel à un renderscript pour le grisage du bitmap source.
      *
      * @param bmp le bitmap à modifier
@@ -161,7 +129,7 @@ public class ImageEdit {
         script.set_zoom(zoom);
 
 
-        //Application u script à chaque pixel.
+        //Application du script à chaque pixel.
 
 
         script.forEach_root(allocIn,allocOut);
@@ -259,7 +227,7 @@ public class ImageEdit {
      * @param bmp Le bitmap à modifier
      * @param comp Le complement à apporter :entre 0 et 1
      * @param context Le context de l'application
-     * @return
+     * @return Le bitmap modifié avec plus ou moins de luminosité
      */
 
     public static Bitmap luminosite(Bitmap bmp, float comp,Context context)
@@ -296,14 +264,11 @@ public class ImageEdit {
 
     /**Fonction d'extension linéaire de la luminance
      *
-     *
-     *
-     *
      * @param bmp Le bitmap à modifier
      * @param min la luminance min
      * @param max la luminance max
      * @param context le context de l'application
-     * @return
+     * @return Le bitmap modifié: dont l'histogramme de luminance est "étalé" entre min et max
      */
 
     public static Bitmap luminanceScr(Bitmap bmp, float min,float max,Context context)
@@ -369,178 +334,16 @@ public class ImageEdit {
 
     }
 
-//useless
-    /*
-    public static Bitmap extensionContraste(Bitmap bmp)
-    {
-        /*int coul;
-        float lum;
-        int[] lut = new int[256];
-        float[] hsv = new float[3];
-        float maxV,minV;
-        float[] listLum = new float[bmp.getWidth()*bmp.getHeight()];
-        int[] pix = new int[bmp.getWidth()*bmp.getHeight()];
-        Bitmap bmp2 = bmp.copy(bmp.getConfig(),true);
-        bmp.getPixels(pix,0,bmp.getWidth(),0,0,bmp.getWidth(),bmp.getHeight());
 
-        for(int i = 0;i<pix.length;i++)
-        {
-            coul =  pix[i];
-            Color.colorToHSV(coul,hsv);
-            listLum[i] = hsv[2]*255;
-
-        }
-        //Calcul des valeurs min, max
-        maxV = minV = listLum[0];
-        for(int i = 0;i<listLum.length;i++)
-        {
-            if(listLum[i]>maxV)
-                maxV = listLum[i];
-            if(listLum[i]<minV)
-                minV = listLum[i];
-        }
-
-        Log.i("contraste",Float.toString(minV) + "," + Float.toString(maxV));
-
-        for(int i =0;i<256;i++)
-        {
-            lut[i] = i;
-            float h = 255*((lut[i]-minV)/(maxV-minV));
-            lut[i]  = Math.round(h);
-            Log.i("contraste",Integer.toString(i) + ":" + Float.toString(lut[i]));
-        }
-        for(int i = 0;i<pix.length;i++)
-        {
-            coul = pix[i];
-            Color.colorToHSV(coul,hsv);
-            lum = lut[(int)Math.floor(hsv[2]*255)];
-            hsv[2] = lum/255;
-            pix[i] = Color.HSVToColor(255,hsv);
-        }
-        bmp2.setPixels(pix,0,bmp2.getWidth(),0,0,bmp2.getWidth(),bmp2.getHeight());
-
-        return bmp2;
-        return changerContraste(bmp,0,255);
-
-    }
-*/
-
-    //Devenue aussi useless
-
-    public static Bitmap diminutionContraste(Bitmap bmp)
-    {
-        int coul,r,g,b,gr;
-        float[] hsv = new float[3];
-        float maxV,minV;
-        float[] lut = new float[256];
-        int debLum = 12;
-        int finLum = 150;
-        float moyGris = 0;
-        float[] listLum = new float[bmp.getWidth()*bmp.getHeight()];
-        int[] pix = new int[bmp.getWidth()*bmp.getHeight()];
-        Bitmap bmp2 = bmp.copy(bmp.getConfig(),true);
-        bmp.getPixels(pix,0,bmp.getWidth(),0,0,bmp.getWidth(),bmp.getHeight());
-        //on boucle sur l'array de pixels et on les grises
-        for(int i =0;i<pix.length;i++)
-        {
-            coul =  pix[i];
-            Color.colorToHSV(coul,hsv);
-            listLum[i] = hsv[2]*255;
-        }
-
-        //Calcul des valeurs min, max et moyenne
-        maxV = minV = listLum[0];
-        for(int i = 0;i<listLum.length;i++)
-        {
-            moyGris += listLum[i];
-            if(listLum[i]>maxV)
-                maxV = listLum[i];
-            if(listLum[i]<minV)
-                minV = listLum[i];
-        }
-        //TODO: ici varianle unused: a voir pour supprimer
-        moyGris = moyGris/listLum.length;
-        for(int i =0;i<256;i++)
-        {
-            lut[i] = i;
-            float h = (finLum-debLum)*((lut[i]-minV)/(maxV-minV)) + debLum;
-            lut[i]  = Math.round(h);
-        }
-        for(int i = 0;i<pix.length;i++)
-        {
-            coul = pix[i];
-            Color.colorToHSV(coul,hsv);
-            hsv[2] = lut[(int)Math.floor(hsv[2]*255)]/255;
-            pix[i] = Color.HSVToColor(255,hsv);
-        }
-        bmp2.setPixels(pix,0,bmp2.getWidth(),0,0,bmp2.getWidth(),bmp2.getHeight());
-
-        return bmp2;
-
-    }
-
-
-    //TODO: à passer en RS: changer contraste
-    /**
-     * Fonction de modification du contraste
+    /**Fonction d'extension linéaire de la dynamique
      *
-     * @param bmp la bitmap à modifier
-     * @param min le minimum de constrate demande
-     * @param max le maximum demandé
-     * @return la bitmap modifié
+     *
+     * @param bmp Le Bitmap à modifier
+     * @param min le niveau de gris min
+     * @param max le niveau de gris max
+     * @param context le Context de l'application
+     * @return Le bitmap modifié: grisé dont l'histogramme s'étale entre 0 et 1 (0 et 255 pour les composantes RGB)
      */
-
-    public static Bitmap changerContraste(Bitmap bmp,int min,int max)
-    {
-        float[] hsv = new float[3];
-        int coul;
-        float maxV,minV;
-        float[] lut = new float[256];
-        int debLum = min;
-        int finLum = max;
-        float[] listLum = new float[bmp.getWidth()*bmp.getHeight()];
-        int[] pix = new int[bmp.getWidth()*bmp.getHeight()];
-        Bitmap bmp2 = bmp.copy(bmp.getConfig(),true);
-        bmp.getPixels(pix,0,bmp.getWidth(),0,0,bmp.getWidth(),bmp.getHeight());
-        //on boucle sur l'array de pixels et on les grises
-        for(int i =0;i<pix.length;i++)
-        {
-            coul =  pix[i];
-            Color.colorToHSV(coul,hsv);
-            listLum[i] = hsv[2]*255;
-        }
-
-        //Calcul des valeurs min, max et moyenne
-        maxV = minV = listLum[0];
-        for(int i = 0;i<listLum.length;i++)
-        {
-
-            if(listLum[i]>maxV)
-                maxV = listLum[i];
-            if(listLum[i]<minV)
-                minV = listLum[i];
-        }
-
-        for(int i =0;i<256;i++)
-        {
-            lut[i] = i;
-            lut[i] = (int)((finLum-debLum)*((lut[i]-minV)/(maxV-minV)) + debLum);
-        }
-        for(int i = 0;i<pix.length;i++)
-        {
-            coul = pix[i];
-            Color.colorToHSV(coul,hsv);
-            hsv[2] = lut[(int)Math.floor(hsv[2]*255)]/255;
-            pix[i] = Color.HSVToColor(255,hsv);
-        }
-        bmp2.setPixels(pix,0,bmp2.getWidth(),0,0,bmp2.getWidth(),bmp2.getHeight());
-
-        return bmp2;
-
-    }
-
-
-
 
     public static Bitmap extensionLineaireScr(Bitmap bmp, float min,float max, Context context)
     {
@@ -581,13 +384,6 @@ public class ImageEdit {
 
         script.forEach_toRGB(allocInter,allocOut);
 
-        //scriptInter.forEach_toBmp(allocInter,allocOut);
-
-
-
-
-
-
 
 
 
@@ -604,57 +400,15 @@ public class ImageEdit {
     }
 
 
-    /**
-     * Fonction d'égalisation de l'histogramme du bitmap à modifier
+    /**Fonction de seuillage de l'image en niveau de gris
      *
-     * @param bmp le Bitmap à modifier
-     * @return Le bitmap modifié
+     *
+     *
+     * @param bmp Le Bitmap à modifier
+     * @param seuil Le seuil entre 0 et 1
+     * @param context Le context de l'application
+     * @return Le bitmap grisé et seuillé
      */
-    public static Bitmap egaliser(Bitmap bmp)
-    {
-
-        int coul;
-
-        //TODO: variables useless: à voir pour supprimer
-        float[] hsv = new float[3];
-        float[] listLum = new float[bmp.getWidth()*bmp.getHeight()];
-        int[] pix = new int[bmp.getWidth()*bmp.getHeight()];
-        Bitmap bmp2 = bmp.copy(bmp.getConfig(),true);
-        bmp.getPixels(pix,0,bmp.getWidth(),0,0,bmp.getWidth(),bmp.getHeight());
-
-        float[] histo = new float[256];
-        float[] cumul = new float[256];
-
-        for(int i =0;i<pix.length;i++)
-        {
-            coul = pix[i];
-            Color.colorToHSV(coul,hsv);
-            listLum[i] = hsv[2]*255;
-            histo[(int)Math.floor(listLum[i])]++;
-        }
-
-        //Calcul de l'histrogramme cumulé
-        cumul[0] = histo[0];
-        for(int i = 1;i< histo.length;i++)
-        {
-            cumul[i] = cumul[i-1] + histo[i];
-        }
-
-
-        for(int i =0;i<pix.length;i++)
-        {
-            coul = pix[i];
-            Color.colorToHSV(coul,hsv);
-            hsv[2] = ((cumul[(int)Math.floor(hsv[2]*255)]*255)/pix.length)/255;
-            pix[i] = Color.HSVToColor(255,hsv);
-        }
-
-        bmp2.setPixels(pix,0,bmp2.getWidth(),0,0,bmp2.getWidth(),bmp2.getHeight());
-
-        return  bmp2;
-
-    }
-
 
     public static  Bitmap seuilScr(Bitmap bmp,float seuil, Context context)
     {
@@ -686,12 +440,15 @@ public class ImageEdit {
 
         return bmp2;
 
-
-
-
     }
 
-
+    /**Fonction de détection de contours de type Sobel
+     *
+     *
+     * @param bmp Le Bitmap à modifier
+     * @param context
+     * @return Le Bitmap Sobelisé
+     */
     public static Bitmap sobelSrc(Bitmap bmp, Context context)
     {
         Bitmap bmp2 = griserScr(bmp,context);
@@ -714,11 +471,6 @@ public class ImageEdit {
 
         float[] matrix1D1 = MatriceGen.lineariser(matrix1);
 
-        for(int i =0;i<9;i++)
-        {
-            Log.i("sobel","" + matrix1D1[i]);
-
-        }
 
 
         float[] matrix1D2 = MatriceGen.lineariser(MatriceGen.sobel2());
@@ -743,13 +495,13 @@ public class ImageEdit {
         //Allocation correspondante au bitmap resultat
         Allocation allocOut = Allocation.createTyped(RS, allocIn.getType());
 
-        //Allocation intermédiaire au cas ou il faille changer l'intervalle des différents coefficients.
+        //Allocation intermédiaire apres application du premier filtre de Sobel
         Allocation allocInter1 = Allocation.createTyped(RS, Type.createXY(RS,Element.F32_4(RS),bmp2.getWidth(),bmp2.getHeight()));
 
-        //Allocation intermédiaire au cas ou il faille changer l'intervalle des différents coefficients.
+        //Allocation intermédiaire apres application 2ème filtre sobel
         Allocation allocInter2 = Allocation.createTyped(RS, Type.createXY(RS,Element.F32_4(RS),bmp2.getWidth(),bmp2.getHeight()));
 
-        //Allocation intermédiaire au cas ou il faille changer l'intervalle des différents coefficients.
+        //Allocation intermédiaire3 :Sobel des 2 présédent
         Allocation allocInter3 = Allocation.createTyped(RS, Type.createXY(RS,Element.F32_4(RS),bmp2.getWidth(),bmp2.getHeight()));
 
         //Allocation correspondante à la matrice noyau.
@@ -759,6 +511,8 @@ public class ImageEdit {
         //variables dont on a besoin pour faire tourner le script.
         Allocation img = Allocation.createFromBitmap(RS,bmp2, Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
 
+
+        //initialisation des variables
         script.set_matrice2(matAll);
 
         script.set_img(img);
@@ -770,18 +524,23 @@ public class ImageEdit {
         script.set_total(total);
 
 
+        //application du premier filtre de convolution sobel
         script.forEach_root(allocIn,allocInter1);
 
 
         matAll.copy1DRangeFrom(0,taille,matrix1D2);
         script.set_matrice2(matAll);
 
+
+        //application du 2ème filtre de convolution sobel
         script.forEach_root(allocIn,allocInter2);
 
         ScriptC_sobeliser scriptSob = new ScriptC_sobeliser(RS);
 
         scriptSob.set_img1(allocInter1);
         scriptSob.set_img2(allocInter2);
+
+        //"Sommage des 2"
 
         scriptSob.forEach_root(allocInter3,allocInter3);
 
@@ -793,11 +552,9 @@ public class ImageEdit {
 
         if(total == -1)
         {
-            Log.i("sobel","ok1");
             scriptInter.set_initialise(0);
             scriptInter.forEach_calculerMinMax0(allocInter3,allocInter3);
             scriptInter.forEach_interNo(allocInter3,allocInter3);
-
         }
 
         scriptInter.forEach_toBmp(allocInter3,allocOut);
@@ -816,10 +573,10 @@ public class ImageEdit {
 
     }
 
-    /**Fonction d'appel du script d'égalisation de constraste: A TESTER
+    /**Fonction d'appel du script d'égalisation de constraste
      *
      * @param bmp le bitmap à modifier
-     * @param context
+     * @param context le context de l'application
      * @return
      */
 
@@ -860,7 +617,7 @@ public class ImageEdit {
         script.forEach_calculHisto(allocIn,allocOut);
 
 
-        //récupération de l'histogram.
+        //récupération de l'histogramme.
 
         histoAll.copyTo(histo);
 
@@ -881,7 +638,6 @@ public class ImageEdit {
         script.forEach_egaliser(allocIn,allocOut);
 
 
-        Log.i("ega","termine");
         allocOut.copyTo(bmp2);
 
         return bmp2;
@@ -922,7 +678,6 @@ public class ImageEdit {
         //calcul de la somme des coeffiecients, renvoie -1 si un coeff est négatif
         float total = calculTotal(matrix);
 
-        Log.i("convol","" + total);
         //Transformation de la matrice en tableau de 1 dimension.
         //et normalisation si possible
         if(total != -1)
@@ -936,13 +691,11 @@ public class ImageEdit {
 
 
         //on travail sur une image en niveaux de gris si le noyau contient des négatifs.
+        Log.i("lapla","" + total);
         if(total == -1)
         {
             bmp2 = ImageEdit.griserScr(bmp2,context);
         }
-
-
-
 
 
         //Classe d'acces à la couche renderscript.
@@ -1002,16 +755,29 @@ public class ImageEdit {
         }
 
         scriptInter.forEach_toBmp(allocInter,allocOut);
+
         allocOut.copyTo(bmp2);
 
 
 
         script.destroy();
+        scriptInter.destroy();
         RS.finish();
-
+        if(total == -1)
+            bmp2 = ImageEdit.griserScr(bmp2,context);
         return bmp2;
 
     }
+
+    /**Fonction de changement de teinte de l'image
+     *
+     *
+     *
+     * @param bmp Le bitmap à modifier
+     * @param teinte La nouvelle teinte à appliquer
+     * @param context Le context de l'application
+     * @return Le bitmap modifié avec la nouvelle teinte
+     */
 
 
 
@@ -1032,7 +798,7 @@ public class ImageEdit {
         //l'allocation du bitmap resultat.
         Allocation allocOut = Allocation.createTyped(RS, allocIn.getType());
 
-        //L'objet du script de grisage.
+        //Le script
         ScriptC_teinter script = new ScriptC_teinter(RS);
 
         script.set_teinte(teinte);
@@ -1051,13 +817,23 @@ public class ImageEdit {
 
     }
 
+    /**Fonction de grisage de l'image à l'exception d'une certaine teintte avec une certaine tolerance.
+     *
+     *
+     *
+     * @param bmp Le bitmap à modifier
+     * @param teinte La teinte à garder
+     * @param tolerance La tolerance
+     * @param context Le context de l'application
+     * @return Le bitmap grisé auf les pixel dont la teinte est proche de la teinte demandée.
+     */
+
     public static Bitmap filtrerTeinte(Bitmap bmp, int teinte, int tolerance,Context context)
     {
 
         //Le nouveau bitmap: le result
         Bitmap bmp2 = bmp.copy(bmp.getConfig(),true);
 
-        Log.i("teinte","" + teinte + "," + tolerance);
 
 
         //création de l'acces  au contexte renderscript.
@@ -1096,155 +872,6 @@ public class ImageEdit {
     }
 
 
-    public static Bitmap chgLum(Bitmap bmp,float minL,float maxL,Context context )
-    {
-
-        //Le nouveau bitmap: le result
-        Bitmap bmp2 = bmp.copy(bmp.getConfig(),true);
-
-
-        //création de l'acces  au contexte renderscript.
-        RenderScript RS = RenderScript.create(context);
-
-        //l'allocation du bitmap à modifier
-        Allocation allocIn;
-        allocIn = Allocation.createFromBitmap(RS, bmp, Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
-
-
-        //l'allocation du bitmap resultat.
-        Allocation allocOut = Allocation.createTyped(RS, allocIn.getType());
-
-        //L'objet du script de grisage.
-        ScriptC_chgLum script = new ScriptC_chgLum(RS);
-
-        script.set_minL(minL);
-
-        script.set_maxL(maxL);
-
-        //l'application du script à chaque pixel.
-        script.forEach_root(allocIn,allocOut);
-
-
-
-        allocOut.copyTo(bmp2);
-
-        script.destroy();
-        RS.finish();
-
-        return bmp2;
-
-
-
-
-
-
-    }
-
-
-
-
-
-    //Fonction de zoom en java: devenue useless
-
-    public static Bitmap zoom(Bitmap bSrc, int w, int h)
-    {
-
-        //création de l'image zoomée
-        Bitmap bmp2 = createBitmap(w,h,bSrc.getConfig());
-
-        //tableau de l'image zoomée
-        int[] pix2 = new int[w*h];
-
-        //Log.i("zoom","check 1");
-        //récupération du tableau de pixel précédent
-        int[] pix = new int[bSrc.getWidth() * bSrc.getHeight()];
-        bSrc.getPixels(pix,0,bSrc.getWidth(),0,0,bSrc.getWidth(),bSrc.getHeight());
-
-        //Log.i("zoom","check 2");
-        int wSrc = bSrc.getWidth();
-        double zoom = (double)w/(double)wSrc;
-
-
-        //variables
-        //les coordonnées du pixel en cours, puis les coordonnés dans l'ancienne image des pixels utilisée pour la création d'un nouveau pixel
-        int x,y,x1,x2,x3,x4,y1,y2,y3,y4;
-
-
-        //la distance du pixel en cours au pixel de base en haut à gauche de celui ci
-        double dx,dy,xD,yD;
-
-
-        //coord des derniers pixels de l'ancienne image directement copié
-        //on boucle sur le nouveau tableau de pixels
-        for(int i =0;i<pix2.length;i++)
-        {
-            //calcul des coordonnées du pixel à creer
-            x = i%w;
-            y = i/w;
-
-            xD = (double)(x)/zoom;
-            yD = (double)(y)/zoom;
-
-
-            //récuperation des 4 pixels nécessaire pour le calcul de la moyenne
-            //variables superfétatoires: uniquement pour la lisibilité
-            x1 = (int)(xD);
-            x2 = x1+1;
-            x3 = x1;
-            x4 = x1+1;
-
-            y1  = (int)(yD);
-
-            y2 = y1+1;
-            y3 = y1;
-            y4 = y1+1;
-
-            dx = xD - x1;
-            dy = yD - y1;
-
-
-            //zoom avec interpolation
-            //on verifie qu'on ne sort pas de l'image
-
-            //Log.i("zoom","check 4 : (" + x1 + "," + y1 + "),("+ x2 + "," + y2 + "),("+ x3 + "," + y3 + "),("+ x4 + "," + y4 + ")" ) ;
-            if((wSrc*y4 + x4)<pix.length)
-            {
-                pix2[i] = interpol(pix[wSrc*y1 + x1],pix[wSrc*y2 + x2],pix[wSrc*y3 + x3],pix[wSrc*y4 + x4],dx,dy,zoom);
-            }
-
-
-        }
-        //Log.i("zoom","check 5");
-        bmp2.setPixels(pix2,0,w,0,0,w,h);
-
-        return bmp2;
-
-    }
-
-
-    //Devenu aussi useless
-    public static int interpol(int p1,int p2,int p3,int p4,double dx, double dy, double fZoom)
-    {
-
-
-        int p;
-        //distance à chaque pixel
-        double d1,d2;
-
-        int r,g,b;
-
-        d1 = dx/fZoom;
-        d2 = dy/fZoom;
-
-
-        r = (int) (((1-d1)*(1-d2)*Color.red(p1) + (1-d1)*(d2)*Color.red(p3) + (1-d2)*(d1)*Color.red(p2) + (d1)*(d2)*Color.red(p4)));
-        g = (int) (((1-d1)*(1-d2)*Color.green(p1) + (1-d1)*(d2)*Color.green(p3) + (1-d2)*(d1)*Color.green(p2) + (d1)*(d2)*Color.green(p4)));
-        b = (int) (((1-d1)*(1-d2)*Color.blue(p1) + (1-d1)*(d2)*Color.blue(p3) + (1-d2)*(d1)*Color.blue(p2) + (d1)*(d2)*Color.blue(p4)));
-        p = Color.argb(255,r,g,b);
-
-        return p;
-
-    }
 
 
 
@@ -1277,7 +904,14 @@ public class ImageEdit {
     }
 
 
-
+    /**Fonction de réduction de l'image pour obtenir soit un appercu pour le choix des modification, soit pour ne pas travailler sur une image trop grance.
+     *
+     *
+     *
+     * @param bmp Le Bitmap à modifier
+     * @param tailleM La taille max qu'aucune des 2 dimension ne peut dépasser
+     * @return Le Bitmap réduit
+     */
 
     public static Bitmap apercu(Bitmap bmp,int tailleM)
     {
@@ -1307,15 +941,7 @@ public class ImageEdit {
 
         }
 
-
-
-
     }
-
-
-
-
-
 
 
 }

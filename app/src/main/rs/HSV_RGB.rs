@@ -1,6 +1,8 @@
 #pragma version(1)
 #pragma rs java_package_name(com.example.jonathan.imageed)
 
+//fonction de conversion RGB<->HSV générique pour une utilisation polyvalente dans plusieurs filtre
+
 
 float4 static HSVtoRGB(float4 coul);
 

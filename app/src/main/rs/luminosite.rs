@@ -4,6 +4,8 @@
 
 float comp;
 
+//fonction d'aout de comp à chacune des 3 composante RGB de la couleur pour augmenter ou diminuer la luminosité
+
 
 void root(const uchar4* in,uchar4* out, uint32_t x, uint32_t y)
 {

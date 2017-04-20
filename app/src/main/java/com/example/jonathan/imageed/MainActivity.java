@@ -67,17 +67,25 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        //Ajout de la barre d'outil
+        //Ajout de la barre d'outil: devenu obsolète
         /*Toolbar barreO = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(barreO);*/
+
+
+        //Calcul des dimnsion max de l'image à modifier, ainsi que la taille max de l'aperçu: dépend du téléphone
+        /*ATTENTION: si l'application plante lors de clic sur le bouton amenant à l'écran de choix de modifications sur l'émulateur:
+
+        il faut modifier la fonction calculTailleMax en conséquence:
+
+        ce bug ne se produit que sur les émulateurs, pas sur les téléphones physique pour une raison inconnue.
+
+        */
 
         calculTaillesMax();
 
         //Création de l'image de départ dans une view de type: MonImage
         Bitmap bmp = BitmapFactory.decodeResource(getResources(),R.drawable.test);
-       // Bitmap bmp = BitmapFactory.decodeResource(getResources(),R.drawable.test2);
 
-        Log.i("taille","" + bmp.getWidth() + "," + bmp.getHeight());
         _img = new MonImage(getBaseContext(),bmp);
         final int idImg = View.generateViewId();
         _img.setId(idImg);
@@ -87,10 +95,8 @@ public class MainActivity extends AppCompatActivity {
         //Ajout de la view à la layout.
         lay.addView(_img);
 
+        //connexion des différents boutons
         connexionBoutons();
-
-
-
 
     }
 
@@ -121,13 +127,13 @@ public class MainActivity extends AppCompatActivity {
 
                     break;
                 //diminuer le contrates de l'image
-                case DIM_CONTRASTE:
-                    _img.set_bmp(ImageEdit.diminutionContraste(_img.get_bmp()));
+                case CONTRASTE:
+                    _img.set_bmp(ImageEdit.extensionLineaireScr(_img.get_bmp(),data.getFloatExtra("contraste1",1),data.getFloatExtra("contraste2",1),getApplicationContext()));
                     break;
                 //étendre dynamiquement le contratste de l'image.
-                case EXT_DYN:
+                case LUMINOSITE:
 
-                    _img.set_bmp(ImageEdit.extensionLineaireScr(_img.get_bmp(),0.0f,1.0f,getApplicationContext()));
+                    _img.set_bmp(ImageEdit.luminosite(_img.get_bmp(),data.getFloatExtra("luminosite",1),getApplicationContext()));
 
                     break;
 
@@ -174,6 +180,11 @@ public class MainActivity extends AppCompatActivity {
                 case SEUIL:
 
                     _img.set_bmp(ImageEdit.seuilScr(_img.get_bmp(),data.getFloatExtra("seuil",1),getApplicationContext()));
+
+                    break;
+                case LUMINANCE:
+
+                    _img.set_bmp((ImageEdit.luminanceScr(_img.get_bmp(),data.getFloatExtra("lum1",1),data.getFloatExtra("lum2",2),getApplicationContext())));
 
                     break;
 
@@ -266,7 +277,7 @@ public class MainActivity extends AppCompatActivity {
      *
      */
 
-    private void gallerie()
+    private void galerie()
     {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -295,6 +306,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    //Sauvegarde de l'image sur la carte SD
     protected void sauvegarder()
     {
 
@@ -339,21 +351,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-               /* .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // continue with delete
-                    }
-                })
-                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // do nothing
-                    }
-                })*/
-
           fenSauv.show();
     }
 
 
+    //fonction d'écriture lors de la sauvegarde: renvoie false si le fichier existe déjà ou si le nom n'est pas copatible.
     protected boolean ecrireFichier(String nom)
     {
         String racine = Environment.getExternalStorageDirectory().toString();
@@ -379,28 +381,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-
-
-    //l'image view sur laquelle on travaille
-    protected MonImage _img;
-
-    //chemin d'acces à la photo s'il y en a
-    protected String _path;
-
-
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        //Création d'un MenuInflater qui va permettre d'instancier un Menu XML en un objet Menu
-        MenuInflater inflater = getMenuInflater();
-        //Instanciation du menu XML spécifier en un objet Menu
-        inflater.inflate(R.menu.settings, menu);
-
-        //Il n'est pas possible de modifier l'icône d'en-tête du sous menu via le fichier XML on le fait donc en JAVA
-        //menu.getItem(0).getSubMenu().setHeaderIcon(R.drawable.test);
-
-        return true;
-    }
 
     protected void connexionBoutons()
     {
@@ -481,7 +461,7 @@ public class MainActivity extends AppCompatActivity {
         bout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                gallerie();
+                galerie();
             }
         });
 
@@ -510,57 +490,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    //Méthode qui se déclenchera au clic sur un item
-    public boolean onOptionsItemSelected(MenuItem item) {
-        //On regarde quel item a été cliqué grâce à son id et on déclenche une action
-        Intent intent;
-        switch (item.getItemId()) {
-
-            case R.id.modifier:
-                return true;
-
-            case R.id.filtres:
-                intent = new Intent(getBaseContext(),ChoixModif.class);
-                intent.putExtra("apercu",_img.apercu(_tailleMaxApercu));
-                startActivityForResult(intent,MODIF_IMG);
-                return true;
-
-            case R.id.convolutions:
-                intent = new Intent(getBaseContext(),ChoixConv.class);
-                startActivityForResult(intent,MODIF_CONV);
-                return true;
-
-            case R.id.undo:
-                _img.annuler();
-                return true;
-            case R.id.restaurer:
-                _img.restaurer();
-                return true;
-
-            case R.id.galerie:
-                gallerie();
-                return true;
-
-            case R.id.photos:
-                prendrePhoto();
-                return true;
-
-            case R.id.sauvegarder:
-                sauvegarder();
-                return true;
-
-            case R.id.réinitialiser:
-                _img.origine();
-                return true;
-
-            case R.id.quitter:
-                //Pour fermer l'application il suffit de faire finish()
-                finish();
-                return true;
-        }
-        return false;}
 
 
+    //fonction de réduction des images pour ne pas trvailler sur des images trop grande qui risquerait de faire planter pour des surcherges de mémoire.
 
     protected void calculTaillesMax()
     {
@@ -573,7 +505,33 @@ public class MainActivity extends AppCompatActivity {
         //on ne travail que sur des image dont aucune des dimensions ne dépasse la heuteur de l'écran multiplié par un facteur:
         _tailleMax = (int)(metric.heightPixels*1.6);
 
+
+        /*Attention: suivant les émulateurs utilisés le calcul des tailles max ne fonctionnes pas:
+
+            Il faut alors "décommentairiser" les deux lignes suivantes pour obtenir un réultat qui marche bien que moins optimal
+
+        */
+
+
+        /*
+        _tailleMax = 1500;
+        _tailleMaxApercu = 300;
+        */
+
     }
+
+
+
+
+    //l'image view sur laquelle on travaille
+    protected MonImage _img;
+
+    //chemin d'acces à la photo s'il y en a
+    protected String _path;
+
+
+
+
 
 
     //les code des request code des intents.
@@ -581,14 +539,15 @@ public class MainActivity extends AppCompatActivity {
     public static final int GRISER = 0;
     public static final int EGALISER = 1;
     public static final int CHG_TEINTE = 2;
-    public static final int DIM_CONTRASTE = 3;
-    public static final int EXT_DYN = 4;
+    public static final int CONTRASTE = 3;
+    public static final int LUMINOSITE = 4;
     public static final int PRENDRE_PHOTO = 5;
 
     public static final int MODIF_IMG = 6;
     public static final int GALERIE = 7;
 
     public static final int FILTRER_TEINTE = 8;
+    public static final int LUMINANCE = 9;
 
 
     public static final int CHG_LUM = 11;
@@ -599,6 +558,7 @@ public class MainActivity extends AppCompatActivity {
     public static final int GAUSSIEN = 14;
     public static final int MOYENNE= 15;
     public static final int SEUIL = 16;
+
 
 
     public static int _tailleMax;

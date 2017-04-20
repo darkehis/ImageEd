@@ -4,9 +4,12 @@ package com.example.jonathan.imageed;
  * Created by Jonathan on 15/04/2017.
  */
 
+//Clase de génération des matrices de convolution à la volée, aini que de différentes opération sur les matrices.
+
 public class MatriceGen {
 
 
+    //génration d'une matrice  pour le filtre Laplacien
     public static float[][] laplacien()
     {
         float[][] mat = new float[3][3];
@@ -26,6 +29,8 @@ public class MatriceGen {
 
     }
 
+    //Première matrice pour le filtre Sobel
+
     public static float[][] sobel1()
     {
         float[][] mat = new float[3][3];
@@ -42,7 +47,7 @@ public class MatriceGen {
         return mat;
 
     }
-
+    //Seconde matrice pour le filtre Sobel
     public static float[][] sobel2()
     {
         float[][] mat = new float[3][3];
@@ -60,6 +65,7 @@ public class MatriceGen {
 
     }
 
+    //Matrice pour le flou moyennant
     public static float[][] moyenne(int taille)
     {
         float[][] mat = new float[taille][taille];
@@ -73,6 +79,8 @@ public class MatriceGen {
 
         return normaliser(mat);
     }
+
+    //Matrice pour le flou gaussien
 
     public static float[][] gaussien(int taille,float sigma)
     {
@@ -93,6 +101,8 @@ public class MatriceGen {
 
     }
 
+    //Fonction pour faire d'une matrice en 2 dimensions une matrice en 1 dimension
+
     protected static float[] lineariser(float[][] mat)
     {
         float[] mat2 = new float[mat.length*mat.length];
@@ -108,6 +118,7 @@ public class MatriceGen {
 
     }
 
+    //Normalisation des coefficient de la matrice.
     protected static float[][] normaliser(float[][] mat)
     {
         float total = 0;

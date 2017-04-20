@@ -3,6 +3,8 @@
 
 float seuil;
 
+//Script de seuillage de l'image en niveau de gris.
+
 void root(const uchar4* v_in,uchar4* v_out, uint32_t x, uint32_t y)
 {
     float4 coul = rsUnpackColor8888(*v_in);

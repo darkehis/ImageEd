@@ -4,6 +4,8 @@
 int teinte;
 int tolerance;
 
+//Script de filtrage d'un teite avec une certaine tolerance.
+
 void root(const uchar4* in,uchar4* out, uint32_t x, uint32_t y)
 {
 

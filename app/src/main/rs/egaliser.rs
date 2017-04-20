@@ -18,6 +18,9 @@ float4 static HSVtoRGB(float4 coul);
 float4 static RGBtoHSV(float4 coul);
 
 
+//Script d'égalisation de l'histogramme.
+
+
 
 void calculHisto(const uchar4* in,uchar4* out,uint32_t x,uint32_t y)
 {
@@ -114,7 +117,7 @@ float static obtH(float4 coul)
             if(cMax == coul.r)
             {
                 h = (coul.g-coul.b)/d;
-                //rsDebug("R",h);
+
 
 
             }
@@ -122,13 +125,13 @@ float static obtH(float4 coul)
             {
 
                 h = (coul.b-coul.r)/d+2;
-                //rsDebug("G",h);
+
             }
 
             else if (cMax == coul.b)
             {
                 h =(coul.r-coul.g)/d + 4;
-                //rsDebug("B",h);
+
             }
 
             h*=60;
@@ -139,6 +142,9 @@ float static obtH(float4 coul)
 
     return h;
 }
+
+//différente fonctions de conversion RGB<->HSV
+
 
 float4 static RGBtoHSV(float4 coul)
 {

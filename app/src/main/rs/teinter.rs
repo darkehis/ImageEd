@@ -4,7 +4,7 @@
 int teinte;
 
 
-
+//Script de changement de teinte des pixels.
 
 
 void root(const uchar4* in,uchar4* out, uint32_t x, uint32_t y)
