@@ -435,7 +435,7 @@ public class ChoixModif extends Activity {
                 bar2.setProgress(0);
                 bar2 = (SeekBar)findViewById(R.id.bar_contr2);
                 bar2.setProgress(100);
-                textView.setText("Contraste : 0.0/1.0" );
+                textView10.setText("Contraste : 0.0/1.0" );
                 bar2 = (SeekBar)findViewById(R.id.bar_sat1);
                 bar2.setProgress(0);
                 bar2 = (SeekBar)findViewById(R.id.bar_sat2);
